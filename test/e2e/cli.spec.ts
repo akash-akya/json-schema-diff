@@ -25,8 +25,8 @@ describe('json-schema-diff cli', () => {
         );
 
         expect(error.message).toContain('Breaking changes found between the two schemas');
-        expect(error.message).toContain('add.type');
-        expect(error.message).toContain('remove.type');
+        expect(error.message).toContain('added');
+        expect(error.message).toContain('removed');
     });
 
     it('should be successful when no differences are found', async () => {

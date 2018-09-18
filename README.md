@@ -28,18 +28,52 @@ Removed differences are areas where the destination schema has become more restr
 Invoke the tool with a file path to the source schema file and the destination schema file. 
 These files should be in JSON format and be valid according to the json schema draft-07 specification.
 
-```
-json-schema-diff /path/to/source-spec.json /path/to/destination-spec.json
-```
-
-The command will return a collection of any differences found in a human readable format. 
-
+The tool will return two json schemas as output, one representing the values that were added by the destination schema and the other representing the values that were removed by the destination schema. 
+ 
 The tool will fail if any removed differences are detected.
+
+#### Example
+*/path/to/source-schema.json*
+```
+{
+  "type": "string"
+}
+```
+
+*/path/to/destination-schema.json*
+```
+{
+  "type": ["string", "number"]
+}
+```
+*Invoking the tool*
+```
+json-schema-diff /path/to/source-schema.json /path/to/destination-schema.json
+```
+*Output*
+```
+Non-breaking changes found between the two schemas.
+
+Values described by the following schema were added:
+{
+    "type": [
+        "number"
+    ]
+}
+
+Values described by the following schema were removed:
+false
+```
+
 
 ### Usage as a nodejs api
 
 Invoke the library with the source schema and the destination schema. 
-These objects should be simple javascript objects and we valid according to the json schema draft-07 specification.
+These objects should be simple javascript objects and be valid according to the json schema draft-07 specification.
+
+For full details of the nodejs api please refer to [api-types.d.ts](lib/api-types.d.ts)
+
+### Example
 
 ```
 const jsonSchemaDiff = require('json-schema-diff');
@@ -52,16 +86,14 @@ const result = await jsonSchemaDiff.diffSchemas({
     destinationSchema: destination
 });
 
-if (result.removedByDestinationSchema) {
+if (result.removalsFound) {
     console.log('Something was removed!');
 }
 
-if (result.addedByDestinationSchema) {
+if (result.additionsFound) {
     console.log('Something was added!');
 }
 ```
-
-For full details of the nodejs api please refer to [api-types.d.ts](lib/api-types.d.ts)
 
 ## Changelog
 See [CHANGELOG.md](CHANGELOG.md)

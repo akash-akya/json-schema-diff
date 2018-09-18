@@ -12,7 +12,8 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "strictNullChecks": true,
-        "target": "es6"
+        "target": "es6",
+        "lib": ["es2016"]
     },
     "include": [
         "lib/**/*",

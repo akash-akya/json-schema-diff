@@ -1,6 +1,6 @@
+import {JsonSchema} from 'json-schema-spec-types';
 import * as JsonSchemaDiff from '../../lib/api';
-import {DiffResult, DiffResultDifferenceType} from '../../lib/api-types';
-import {JsonSchema} from '../../lib/json-schema-diff/parser/json-set/json-schema';
+import {DiffResult} from '../../lib/api-types';
 import {expectToFail} from '../support/expect-to-fail';
 
 describe('api', () => {
@@ -8,7 +8,7 @@ describe('api', () => {
         JsonSchemaDiff.diffSchemas({sourceSchema, destinationSchema});
 
     describe('input types', () => {
-        it('should consider changing public input options type as a breaking change', async () => {
+        it('should accept a source and destination schema as input', async () => {
             const jsonSchemaDiffOptions = {
                 destinationSchema: {},
                 sourceSchema: {}
@@ -28,7 +28,7 @@ describe('api', () => {
             expect(error.message).toEqual(jasmine.stringMatching('Source schema is not a valid json schema'));
         });
 
-        it('should return a result according to the defined public types', async () => {
+        it('should return an added result according to the defined public types', async () => {
             const sourceSchema: JsonSchema = {type: 'string'};
             const destinationSchema: JsonSchema = {type: ['string', 'number']};
 
@@ -36,38 +36,55 @@ describe('api', () => {
             const resultWithoutTypes = result as any;
 
             expect(resultWithoutTypes).toEqual({
-                addedByDestinationSchema: jasmine.any(Boolean),
-                differences: [{
-                    addedByDestinationSchema: jasmine.any(Boolean),
-                    destinationValues: [{
-                        path: jasmine.any(Array),
-                        value: jasmine.anything()
-                    }],
-                    removedByDestinationSchema: jasmine.any(Boolean),
-                    sourceValues: [{
-                        path: jasmine.any(Array),
-                        value: jasmine.anything()
-                    }],
-                    type: jasmine.any(String),
-                    value: jasmine.anything()
-                }],
-                removedByDestinationSchema: jasmine.any(Boolean)
+                addedJsonSchema: {
+                    'type': [ jasmine.any(String) ],
+                    'x-destination-origins': [
+                        {
+                            path: [ jasmine.any(String) ],
+                            value: [ jasmine.any(String), jasmine.any(String) ]
+                        }
+                    ],
+                    'x-source-origins': [
+                        {
+                            path: [ jasmine.any(String) ],
+                            value: jasmine.any(String)
+                        }
+                    ]
+                },
+                additionsFound: jasmine.any(Boolean),
+                removalsFound: jasmine.any(Boolean),
+                removedJsonSchema: jasmine.any(Boolean)
             });
         });
 
-        describe('difference types', () => {
-            type InputExamplesByDifferenceType = {
-                [type in DiffResultDifferenceType]: string
-            };
+        it('should return a removed result according to the defined public types', async () => {
+            const sourceSchema: JsonSchema = {type: ['string', 'number']};
+            const destinationSchema: JsonSchema = {type: 'string'};
 
-            it('should consider changing the map as a breaking change', () => {
-                const inputExamplesByDifferenceType: InputExamplesByDifferenceType = {
-                    'add.type': '',
-                    'remove.type': ''
-                };
+            const result = await whenSourceAndDestinationSchemasAreDiffed(sourceSchema, destinationSchema);
+            const resultWithoutTypes = result as any;
 
-                expect(inputExamplesByDifferenceType).toBeDefined();
+            expect(resultWithoutTypes).toEqual({
+                addedJsonSchema: jasmine.any(Boolean),
+                additionsFound: jasmine.any(Boolean),
+                removalsFound: jasmine.any(Boolean),
+                removedJsonSchema: {
+                    'type': [ jasmine.any(String) ],
+                    'x-destination-origins': [
+                        {
+                            path: [ jasmine.any(String) ],
+                            value: jasmine.any(String)
+                        }
+                    ],
+                    'x-source-origins': [
+                        {
+                            path: [ jasmine.any(String) ],
+                            value: [ jasmine.any(String), jasmine.any(String) ]
+                        }
+                    ]
+                }
             });
         });
+
     });
 });

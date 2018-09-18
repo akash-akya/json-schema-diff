@@ -1,4 +1,4 @@
-import {Path} from '../../api-types';
+import {Path} from '../../../api-types';
 import {SchemaOriginType} from './json-set/set';
 
 export class SchemaLocation {

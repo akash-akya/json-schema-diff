@@ -1,5 +1,5 @@
+import {JsonSchema} from 'json-schema-spec-types';
 import {DiffResult} from '../../../lib/api-types';
-import {JsonSchema} from '../../../lib/json-schema-diff/parser/json-set/json-schema';
 import {expectToFail} from '../../support/expect-to-fail';
 import {createJsonSchemaDiff} from './create-json-schema-diff';
 

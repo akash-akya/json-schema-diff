@@ -1,5 +1,7 @@
 import * as Ajv from 'ajv';
-import {jsonSchemaDraft7Schema} from './json-schema-draft-7-schema';
+
+// tslint:disable-next-line:no-var-requires no-submodule-imports
+const jsonSchemaDraft7Schema = require('json-schema-spec-types/lib/json-schema-draft-07-schema');
 
 interface SuccessfulValidationResult {
     isValid: true;

@@ -19,7 +19,11 @@ export class JsonSchemaDiff {
     }
 
     private static containsBreakingChanges(diffResult: DiffResult): boolean {
-        return diffResult.removedByDestinationSchema;
+        return diffResult.removalsFound;
+    }
+
+    private static containsNonBreakingChanges(diffResult: DiffResult): boolean {
+        return diffResult.additionsFound;
     }
 
     public constructor(
@@ -47,9 +51,9 @@ export class JsonSchemaDiff {
 
     private reportDiffResult(diffResult: DiffResult): void {
         if (JsonSchemaDiff.containsBreakingChanges(diffResult)) {
-            this.reporter.reportFailureWithDifferences(diffResult.differences);
-        } else if (diffResult.differences.length > 0) {
-            this.reporter.reportSuccessWithDifferences(diffResult.differences);
+            this.reporter.reportFailureWithBreakingChanges(diffResult);
+        } else if (JsonSchemaDiff.containsNonBreakingChanges(diffResult)) {
+            this.reporter.reportNonBreakingChanges(diffResult);
         } else {
             this.reporter.reportNoDifferencesFound();
         }

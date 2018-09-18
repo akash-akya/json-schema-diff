@@ -1,33 +1,25 @@
 // tslint:disable:no-namespace
 
+import {JsonSchema} from 'json-schema-spec-types';
+
 declare namespace JsonSchemaDiff {
     export type Path = Array<string | number>;
 
-    export interface DiffResultDifferenceValue {
+    export interface DiffResultOriginValue {
         path: Path;
         value: any;
     }
 
-    export type DiffResultDifferenceType = 'add.type' | 'remove.type';
-
-    export interface DiffResultDifference {
-        addedByDestinationSchema: boolean;
-        destinationValues: DiffResultDifferenceValue[];
-        removedByDestinationSchema: boolean;
-        sourceValues: DiffResultDifferenceValue[];
-        type: DiffResultDifferenceType;
-        value: any;
-    }
-
     export interface DiffResult {
-        addedByDestinationSchema: boolean;
-        differences: DiffResultDifference[];
-        removedByDestinationSchema: boolean;
+        additionsFound: boolean;
+        addedJsonSchema: JsonSchema;
+        removalsFound: boolean;
+        removedJsonSchema: JsonSchema;
     }
 
     export interface JsonSchemaDiffOptions {
-        sourceSchema: any;
-        destinationSchema: any;
+        sourceSchema: JsonSchema;
+        destinationSchema: JsonSchema;
     }
 }
 

@@ -1,4 +1,4 @@
-import {SimpleTypes} from '../json-set/json-schema';
+import {SimpleTypes} from 'json-schema-spec-types';
 import {ParsedTypeKeyword} from '../json-set/set';
 
 export const isTypeSupported = (parsedTypeKeyword: ParsedTypeKeyword, type: SimpleTypes): boolean =>

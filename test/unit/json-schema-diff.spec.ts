@@ -1,8 +1,9 @@
-import {JsonSchema} from '../../lib/json-schema-diff/parser/json-set/json-schema';
+import {JsonSchema} from 'json-schema-spec-types';
+import {DiffResult} from '../../lib/api-types';
+import {DiffJsonSchema} from '../../lib/json-schema-diff/differ/parser/json-set/diff-json-schema';
 import {expectToFail} from '../support/expect-to-fail';
-import {
-    diffResultDifferenceBuilder} from './support/builders/diff-result-difference-builder';
-import {diffResultDifferenceValueBuilder} from './support/builders/diff-result-difference-value-builder';
+import {diffJsonSchemaBuilder} from './support/builders/diff-json-schema-builder';
+import {diffResultOriginsBuilder} from './support/builders/diff-result-origins-builder';
 import {createJsonSchemaDiffWithMocks} from './support/create-json-schema-diff';
 import {createMockFileSystem, MockFileSystem} from './support/mocks/mock-file-system';
 import {createMockReporter, MockReporter} from './support/mocks/mock-reporter';
@@ -111,53 +112,61 @@ describe('json-schema-diff', () => {
             await invokeDiffFilesWithContents(aSchema, aSchema);
 
             expect(mockReporter.reportNoDifferencesFound).toHaveBeenCalled();
-            expect(mockReporter.reportSuccessWithDifferences).not.toHaveBeenCalled();
+            expect(mockReporter.reportNonBreakingChanges).not.toHaveBeenCalled();
         });
 
-        it('should not fail and report compatible differences when an addition is found', async () => {
-            const sourceSchema: JsonSchema = {type: 'object'};
-            const destinationSchema: JsonSchema = {type: ['string', 'object']};
-
-            await invokeDiffFilesWithContents(sourceSchema, destinationSchema);
-
-            expect(mockReporter.reportNoDifferencesFound).not.toHaveBeenCalled();
-            expect(mockReporter.reportSuccessWithDifferences).toHaveBeenCalledWith([
-                diffResultDifferenceBuilder
-                    .withSourceValue(
-                        diffResultDifferenceValueBuilder
-                            .withPath(['type'])
-                            .withValue('object'))
-                    .withDestinationValue(
-                        diffResultDifferenceValueBuilder
-                            .withPath(['type'])
-                            .withValue(['string', 'object'])
-                    )
-                    .withValue('string')
-                    .withTypeAddType().build()
-            ]);
-        });
-
-        it('should fail and report incompatible differences when a removal is found', async () => {
+        it('should fail and report breaking changes when a removal is found', async () => {
             const sourceSchema: JsonSchema = {type: ['string', 'object']};
             const destinationSchema: JsonSchema = {type: 'object'};
 
             await expectToFail(invokeDiffFilesWithContents(sourceSchema, destinationSchema));
 
-            expect(mockReporter.reportFailureWithDifferences).toHaveBeenCalledWith([
-                diffResultDifferenceBuilder
-                    .withTypeRemoveType()
-                    .withDestinationValue(
-                        diffResultDifferenceValueBuilder
-                            .withPath(['type'])
-                            .withValue('object'))
-                    .withSourceValue(
-                        diffResultDifferenceValueBuilder
-                            .withPath(['type'])
-                            .withValue(['string', 'object'])
-                    )
-                    .withValue('string')
-                    .build()
-            ]);
+            const removedJsonSchema: DiffJsonSchema = diffJsonSchemaBuilder
+                .withSourceOrigins([diffResultOriginsBuilder
+                    .withPath(['type'])
+                    .withValue(['string', 'object'])])
+                .withDestinationOrigins([diffResultOriginsBuilder
+                    .withPath(['type'])
+                    .withValue('object')])
+                .withSchema({type: ['string']})
+                .build();
+            const addedJsonSchema: DiffJsonSchema = false;
+            const expectedDiffResult: DiffResult = {
+                addedJsonSchema,
+                additionsFound: false,
+                removalsFound: true,
+                removedJsonSchema
+            };
+
+            expect(mockReporter.reportNonBreakingChanges).not.toHaveBeenCalled();
+            expect(mockReporter.reportFailureWithBreakingChanges).toHaveBeenCalledWith(expectedDiffResult);
+        });
+
+        it('should not fail and report non-breaking changes when an addition is found', async () => {
+            const sourceSchema: JsonSchema = {type: 'object'};
+            const destinationSchema: JsonSchema = {type: ['string', 'object']};
+
+            await invokeDiffFilesWithContents(sourceSchema, destinationSchema);
+
+            const addedJsonSchema: DiffJsonSchema = diffJsonSchemaBuilder
+                .withDestinationOrigins([diffResultOriginsBuilder
+                    .withPath(['type'])
+                    .withValue(['string', 'object'])])
+                .withSourceOrigins([diffResultOriginsBuilder
+                    .withPath(['type'])
+                    .withValue('object')])
+                .withSchema({type: ['string']})
+                .build();
+            const removedJsonSchema: DiffJsonSchema = false;
+            const expectedDiffResult: DiffResult = {
+                addedJsonSchema,
+                additionsFound: true,
+                removalsFound: false,
+                removedJsonSchema
+            };
+
+            expect(mockReporter.reportFailureWithBreakingChanges).not.toHaveBeenCalled();
+            expect(mockReporter.reportNonBreakingChanges).toHaveBeenCalledWith(expectedDiffResult);
         });
     });
 });
