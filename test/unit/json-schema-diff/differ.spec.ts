@@ -39,6 +39,32 @@ describe('differ', () => {
                 'data.type should be array, data.type should match some schema in anyOf'
             ));
         });
+
+        it('should dereference schemas before validating', async () => {
+            const schemaWithInvalidReference: JsonSchema = {
+                components: {
+                    schemas: {
+                        numberSchema: {
+                            exclusiveMinimum: false,
+                            type: 'number'
+                        }
+                    }
+                },
+                properties: {
+                    numberProperty: {
+                        $ref: '#/components/schemas/numberSchema'
+                    }
+                },
+                type: 'number'
+            };
+
+            const error = await invokeDiffAndExpectToFail(schemaWithInvalidReference, schemaWithInvalidReference);
+
+            expect(error).toEqual(new Error(
+                'Source schema is not a valid json schema: ' +
+                'data.properties[\'numberProperty\'].exclusiveMinimum should be number'
+            ));
+        });
     });
 
     describe('type', () => {

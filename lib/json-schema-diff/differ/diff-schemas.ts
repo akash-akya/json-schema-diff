@@ -5,6 +5,7 @@ import {DiffResult, DiffResultDifference, DiffResultDifferenceType} from '../../
 import {JsonSchema} from '../parser/json-set/json-schema';
 import {Representation} from '../parser/json-set/set';
 import {parseAsJsonSet} from '../parser/parse-as-json-set';
+import {validateSchemas} from './validate-schemas';
 
 const representationsToAddedDifferences = (representations: Representation[]): DiffResultDifference[] =>
     representations.map((representation) => ({
@@ -39,6 +40,8 @@ export const diffSchemas = async (sourceSchema: JsonSchema,
     const [dereferencedSourceSchema, dereferencedDestinationSchema] = await Promise.all([
         dereferenceSchema(sourceSchema), dereferenceSchema(destinationSchema)
     ]);
+
+    await validateSchemas(sourceSchema, destinationSchema);
 
     const sourceSet = parseAsJsonSet(dereferencedSourceSchema, 'source');
     const destinationSet = parseAsJsonSet(dereferencedDestinationSchema, 'destination');
