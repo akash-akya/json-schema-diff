@@ -8,23 +8,14 @@ class AllArraySet {
         this.setType = 'array';
         this.type = 'all';
     }
-    intersect(otherSet) {
-        return otherSet.intersectWithAll(this);
+    intersect(other) {
+        return other.intersectWithAll(this);
     }
-    intersectWithAll(otherAllSet) {
-        return this.withAdditionalOrigins(otherAllSet.schemaOrigins);
+    intersectWithAll(other) {
+        return new AllArraySet(this.schemaOrigins.concat(other.schemaOrigins));
     }
-    intersectWithEmpty(otherEmptySet) {
-        return new EmptyArraySet(this.schemaOrigins.concat(otherEmptySet.schemaOrigins));
-    }
-    union(otherSet) {
-        return otherSet.unionWithAll(this);
-    }
-    unionWithAll(otherAllArraySet) {
-        return this.withAdditionalOrigins(otherAllArraySet.schemaOrigins);
-    }
-    unionWithEmpty(otherEmptySet) {
-        return this.withAdditionalOrigins(otherEmptySet.schemaOrigins);
+    intersectWithEmpty(other) {
+        return new EmptyArraySet(this.schemaOrigins.concat(other.schemaOrigins));
     }
     complement() {
         return new EmptyArraySet(this.schemaOrigins);
@@ -37,9 +28,6 @@ class AllArraySet {
                 value: 'array'
             }];
     }
-    withAdditionalOrigins(origins) {
-        return new AllArraySet(this.schemaOrigins.concat(origins));
-    }
 }
 exports.AllArraySet = AllArraySet;
 class EmptyArraySet {
@@ -48,32 +36,21 @@ class EmptyArraySet {
         this.setType = 'array';
         this.type = 'empty';
     }
-    intersect(otherSet) {
-        return otherSet.intersectWithEmpty(this);
+    intersect(other) {
+        return other.intersectWithEmpty(this);
     }
-    intersectWithAll(otherAllSet) {
-        return this.withAdditionalOrigins(otherAllSet.schemaOrigins);
+    intersectWithAll(other) {
+        return new EmptyArraySet(other.schemaOrigins.concat(this.schemaOrigins));
     }
-    intersectWithEmpty(otherEmptySet) {
-        return otherEmptySet.withAdditionalOrigins(this.schemaOrigins);
-    }
-    union(otherSet) {
-        return otherSet.unionWithEmpty(this);
-    }
-    unionWithAll(otherAllArraySet) {
-        return new AllArraySet(this.schemaOrigins.concat(otherAllArraySet.schemaOrigins));
-    }
-    unionWithEmpty(otherEmptySet) {
-        return this.withAdditionalOrigins(otherEmptySet.schemaOrigins);
+    intersectWithEmpty(other) {
+        // TODO: this can't be asserted without keywords support
+        return new EmptyArraySet(other.schemaOrigins.concat(this.schemaOrigins));
     }
     complement() {
         return new AllArraySet(this.schemaOrigins);
     }
     toRepresentations() {
         return [];
-    }
-    withAdditionalOrigins(origins) {
-        return new EmptyArraySet(this.schemaOrigins.concat(origins));
     }
 }
 exports.EmptyArraySet = EmptyArraySet;

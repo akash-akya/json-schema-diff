@@ -12,6 +12,7 @@ const RefParser = require("json-schema-ref-parser");
 const _ = require("lodash");
 const util_1 = require("util");
 const parse_as_json_set_1 = require("../parser/parse-as-json-set");
+const validate_schemas_1 = require("./validate-schemas");
 const representationsToAddedDifferences = (representations) => representations.map((representation) => ({
     addedByDestinationSchema: true,
     destinationValues: representation.destinationValues,
@@ -38,6 +39,7 @@ exports.diffSchemas = (sourceSchema, destinationSchema) => __awaiter(this, void 
     const [dereferencedSourceSchema, dereferencedDestinationSchema] = yield Promise.all([
         exports.dereferenceSchema(sourceSchema), exports.dereferenceSchema(destinationSchema)
     ]);
+    yield validate_schemas_1.validateSchemas(sourceSchema, destinationSchema);
     const sourceSet = parse_as_json_set_1.parseAsJsonSet(dereferencedSourceSchema, 'source');
     const destinationSet = parse_as_json_set_1.parseAsJsonSet(dereferencedDestinationSchema, 'destination');
     const intersectionOfSets = sourceSet.intersect(destinationSet);

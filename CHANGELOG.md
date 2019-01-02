@@ -1,3 +1,13 @@
+<a name="0.8.3"></a>
+## [0.8.3](https://bitbucket.org/atlassian/json-schema-diff/compare/0.8.2...0.8.3) (2019-01-02)
+
+
+### Bug Fixes
+
+* fix race condition in the watch loop for unit tests ([5753cab](https://bitbucket.org/atlassian/json-schema-diff/commits/5753cab))
+
+
+
 <a name="0.8.2"></a>
 ## [0.8.2](https://bitbucket.org/atlassian/json-schema-diff/compare/0.8.1...0.8.2) (2018-08-08)
 

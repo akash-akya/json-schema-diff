@@ -8,23 +8,14 @@ class AllNullSet {
         this.setType = 'null';
         this.type = 'all';
     }
-    intersect(otherSet) {
-        return otherSet.intersectWithAll(this);
+    intersect(other) {
+        return other.intersectWithAll(this);
     }
-    intersectWithAll(otherAllSet) {
-        return this.withAdditionalOrigins(otherAllSet.schemaOrigins);
+    intersectWithAll(other) {
+        return new AllNullSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
-    intersectWithEmpty(otherEmptySet) {
-        return new EmptyNullSet(this.schemaOrigins.concat(otherEmptySet.schemaOrigins));
-    }
-    union(otherSet) {
-        return otherSet.unionWithAll(this);
-    }
-    unionWithAll(otherAllSet) {
-        return this.withAdditionalOrigins(otherAllSet.schemaOrigins);
-    }
-    unionWithEmpty(otherEmptySet) {
-        return this.withAdditionalOrigins(otherEmptySet.schemaOrigins);
+    intersectWithEmpty(other) {
+        return new EmptyNullSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
     complement() {
         return new EmptyNullSet(this.schemaOrigins);
@@ -37,9 +28,6 @@ class AllNullSet {
                 value: 'null'
             }];
     }
-    withAdditionalOrigins(origins) {
-        return new AllNullSet(this.schemaOrigins.concat(origins));
-    }
 }
 exports.AllNullSet = AllNullSet;
 class EmptyNullSet {
@@ -48,32 +36,21 @@ class EmptyNullSet {
         this.setType = 'null';
         this.type = 'empty';
     }
-    intersect(otherSet) {
-        return otherSet.intersectWithEmpty(this);
+    intersect(other) {
+        return other.intersectWithEmpty(this);
     }
-    intersectWithAll(otherAllSet) {
-        return this.withAdditionalOrigins(otherAllSet.schemaOrigins);
+    intersectWithAll(other) {
+        return new EmptyNullSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
-    intersectWithEmpty(otherEmptySet) {
-        return otherEmptySet.withAdditionalOrigins(this.schemaOrigins);
-    }
-    union(otherSet) {
-        return otherSet.unionWithEmpty(this);
-    }
-    unionWithAll(otherAllSet) {
-        return new AllNullSet(this.schemaOrigins.concat(otherAllSet.schemaOrigins));
-    }
-    unionWithEmpty(otherEmptySet) {
-        return this.withAdditionalOrigins(otherEmptySet.schemaOrigins);
+    intersectWithEmpty(other) {
+        // TODO: this can't be asserted without keywords support
+        return new EmptyNullSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
     complement() {
         return new AllNullSet(this.schemaOrigins);
     }
     toRepresentations() {
         return [];
-    }
-    withAdditionalOrigins(origins) {
-        return new EmptyNullSet(this.schemaOrigins.concat(origins));
     }
 }
 exports.EmptyNullSet = EmptyNullSet;

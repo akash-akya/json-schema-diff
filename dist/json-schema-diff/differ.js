@@ -9,11 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const diff_schemas_1 = require("./differ/diff-schemas");
-const validate_schemas_1 = require("./differ/validate-schemas");
 class Differ {
     static diff(sourceSchema, destinationSchema) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield validate_schemas_1.validateSchemas(sourceSchema, destinationSchema);
             return diff_schemas_1.diffSchemas(sourceSchema, destinationSchema);
         });
     }

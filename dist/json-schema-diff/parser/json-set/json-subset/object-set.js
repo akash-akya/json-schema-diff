@@ -12,30 +12,19 @@ class AllObjectSet {
         this.setType = 'object';
         this.type = 'all';
     }
-    intersect(otherSet) {
-        return otherSet.intersectWithAll(this);
+    intersect(other) {
+        return other.intersectWithAll(this);
     }
-    intersectWithSome(otherSomeObjectSet) {
-        return intersectAllAndSome(this, otherSomeObjectSet);
+    intersectWithSome(other) {
+        return intersectAllAndSome(this, other);
     }
-    intersectWithAll(otherAllSet) {
-        return new AllObjectSet(this.schemaOrigins.concat(otherAllSet.schemaOrigins), intersectProperties(this, otherAllSet), this.additionalProperties.intersect(otherAllSet.additionalProperties));
+    intersectWithAll(other) {
+        return new AllObjectSet(this.schemaOrigins.concat(other.schemaOrigins), intersectProperties(this, other), this.additionalProperties.intersect(other.additionalProperties));
     }
-    intersectWithEmpty(otherEmptySet) {
-        return intersectEmptyWithOtherObjectSet(otherEmptySet, this);
+    intersectWithEmpty(other) {
+        return intersectEmptyWithOtherObjectSet(other, this);
     }
-    union(otherSet) {
-        return otherSet.unionWithAll(this);
-    }
-    unionWithAll(otherAllSet) {
-        return unionAllWithOtherObjectSet(otherAllSet, this);
-    }
-    unionWithEmpty(otherEmptySet) {
-        return new AllObjectSet(this.schemaOrigins.concat(otherEmptySet.schemaOrigins), unionProperties(this, otherEmptySet), this.additionalProperties.union(otherEmptySet.additionalProperties));
-    }
-    unionWithSome(otherSomeSet) {
-        return unionAllWithOtherObjectSet(this, otherSomeSet);
-    }
+    // TODO: this can't be asserted without keywords support
     complement() {
         return new EmptyObjectSet(this.schemaOrigins, complementProperties(this), this.additionalProperties.complement());
     }
@@ -63,29 +52,18 @@ class EmptyObjectSet {
         this.setType = 'object';
         this.type = 'empty';
     }
-    intersect(otherSet) {
-        return otherSet.intersectWithEmpty(this);
+    intersect(other) {
+        return other.intersectWithEmpty(this);
     }
-    intersectWithAll(otherAllSet) {
-        return intersectEmptyWithOtherObjectSet(this, otherAllSet);
+    intersectWithAll(other) {
+        return intersectEmptyWithOtherObjectSet(this, other);
     }
-    intersectWithSome(otherSomeSet) {
-        return intersectEmptyWithOtherObjectSet(this, otherSomeSet);
+    intersectWithSome(other) {
+        return intersectEmptyWithOtherObjectSet(this, other);
     }
-    intersectWithEmpty(otherEmptySet) {
-        return intersectEmptyWithOtherObjectSet(this, otherEmptySet);
-    }
-    union(otherSet) {
-        return otherSet.unionWithEmpty(this);
-    }
-    unionWithAll(otherAllSet) {
-        return unionAllWithOtherObjectSet(otherAllSet, this);
-    }
-    unionWithEmpty(otherEmptySet) {
-        return new EmptyObjectSet(this.schemaOrigins.concat(otherEmptySet.schemaOrigins), unionProperties(this, otherEmptySet), this.additionalProperties.intersect(otherEmptySet.additionalProperties));
-    }
-    unionWithSome(otherSomeSet) {
-        return unionSomeAndEmpty(otherSomeSet, this);
+    intersectWithEmpty(other) {
+        // TODO: this can't be asserted without keywords support
+        return intersectEmptyWithOtherObjectSet(this, other);
     }
     complement() {
         return new AllObjectSet(this.schemaOrigins, complementProperties(this), this.additionalProperties.complement());
@@ -109,35 +87,21 @@ class SomeObjectSet {
         this.setType = 'object';
         this.type = 'some';
     }
-    intersect(otherSet) {
-        return otherSet.intersectWithSome(this);
+    intersect(other) {
+        return other.intersectWithSome(this);
     }
-    intersectWithSome(otherSomeSet) {
-        const mergedSchemaOrigins = this.schemaOrigins.concat(otherSomeSet.schemaOrigins);
-        const mergedProperties = intersectProperties(this, otherSomeSet);
-        const mergedAdditionalProperties = this.additionalProperties.intersect(otherSomeSet.additionalProperties);
+    intersectWithSome(other) {
+        // TODO: mergedSchemaOrigins can't be properly asserted without keywords support
+        const mergedSchemaOrigins = this.schemaOrigins.concat(other.schemaOrigins);
+        const mergedProperties = intersectProperties(this, other);
+        const mergedAdditionalProperties = this.additionalProperties.intersect(other.additionalProperties);
         return new SomeObjectSet(mergedSchemaOrigins, mergedProperties, mergedAdditionalProperties);
     }
-    intersectWithAll(otherAllSet) {
-        return intersectAllAndSome(otherAllSet, this);
+    intersectWithAll(other) {
+        return intersectAllAndSome(other, this);
     }
-    intersectWithEmpty(otherEmptySet) {
-        return intersectEmptyWithOtherObjectSet(otherEmptySet, this);
-    }
-    union(otherSet) {
-        return otherSet.unionWithSome(this);
-    }
-    unionWithAll(otherAllSet) {
-        return unionAllWithOtherObjectSet(otherAllSet, this);
-    }
-    unionWithEmpty(otherEmptySet) {
-        return unionSomeAndEmpty(this, otherEmptySet);
-    }
-    unionWithSome(otherSomeSet) {
-        const mergedSchemaOrigins = this.schemaOrigins.concat(otherSomeSet.schemaOrigins);
-        const mergedProperties = unionProperties(this, otherSomeSet);
-        const mergedAdditionalProperties = this.additionalProperties.union(otherSomeSet.additionalProperties);
-        return new SomeObjectSet(mergedSchemaOrigins, mergedProperties, mergedAdditionalProperties);
+    intersectWithEmpty(other) {
+        return intersectEmptyWithOtherObjectSet(other, this);
     }
     complement() {
         return new SomeObjectSet(this.schemaOrigins, complementProperties(this), this.additionalProperties.complement());
@@ -164,15 +128,6 @@ class SomeObjectSet {
     }
 }
 exports.SomeObjectSet = SomeObjectSet;
-const unionProperties = (objectSet1, objectSet2) => {
-    const mergedProperties = {};
-    const allPropertyNames = getUniquePropertyNames(objectSet1.getPropertyNames(), objectSet2.getPropertyNames());
-    allPropertyNames.forEach((propertyName) => {
-        mergedProperties[propertyName] = objectSet1.getProperty(propertyName)
-            .union(objectSet2.getProperty(propertyName));
-    });
-    return mergedProperties;
-};
 const intersectProperties = (objectSet1, objectSet2) => {
     const mergedProperties = {};
     const allPropertyNames = getUniquePropertyNames(objectSet1.getPropertyNames(), objectSet2.getPropertyNames());
@@ -194,18 +149,6 @@ const intersectEmptyWithOtherObjectSet = (emptyObjectSet, otherObjectSet) => {
     const mergedAdditionalProperties = emptyObjectSet.additionalProperties
         .intersect(otherObjectSet.additionalProperties);
     return new EmptyObjectSet(mergedSchemaOrigins, mergedProperties, mergedAdditionalProperties);
-};
-const unionAllWithOtherObjectSet = (allObjectSet, otherObjectSet) => {
-    const mergedSchemaOrigins = allObjectSet.schemaOrigins.concat(otherObjectSet.schemaOrigins);
-    const mergedProperties = unionProperties(allObjectSet, otherObjectSet);
-    const mergedAdditionalProperties = allObjectSet.additionalProperties.union(otherObjectSet.additionalProperties);
-    return new AllObjectSet(mergedSchemaOrigins, mergedProperties, mergedAdditionalProperties);
-};
-const unionSomeAndEmpty = (someObjectSet, emptyObjectSet) => {
-    const mergedSchemaOrigins = someObjectSet.schemaOrigins.concat(emptyObjectSet.schemaOrigins);
-    const mergedProperties = unionProperties(someObjectSet, emptyObjectSet);
-    const mergedAdditionalProperties = someObjectSet.additionalProperties.union(emptyObjectSet.additionalProperties);
-    return new SomeObjectSet(mergedSchemaOrigins, mergedProperties, mergedAdditionalProperties);
 };
 const complementProperties = (objectSet) => {
     const complementedProperties = {};

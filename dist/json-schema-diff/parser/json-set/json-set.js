@@ -16,12 +16,14 @@ class AllJsonSet {
         this.type = 'all';
     }
     complement() {
+        // TODO: can't be properly asserted without keywords support
         return new EmptyJsonSet(this.schemaOrigins);
     }
     intersect(other) {
         return other.intersectWithAll(this);
     }
     intersectWithAll(other) {
+        // TODO: mergedSchemaOrigins can't be properly asserted without keywords support
         return new AllJsonSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
     intersectWithEmpty(other) {
@@ -37,18 +39,6 @@ class AllJsonSet {
             object: other.subsets.object.intersect(create_object_set_1.createAllObjectSet(this)),
             string: other.subsets.string.intersect(new string_set_1.AllStringSet(this.schemaOrigins))
         });
-    }
-    union(other) {
-        return other.unionWithAll(this);
-    }
-    unionWithSome(other) {
-        return new AllJsonSet(this.schemaOrigins.concat(other.schemaOrigins));
-    }
-    unionWithAll(other) {
-        return new AllJsonSet(this.schemaOrigins.concat(other.schemaOrigins));
-    }
-    unionWithEmpty(other) {
-        return new AllJsonSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
     toRepresentations() {
         return set_1.allSchemaTypes
@@ -74,6 +64,7 @@ class EmptyJsonSet {
         return other.intersectWithEmpty(this);
     }
     intersectWithEmpty(other) {
+        // TODO: can't be properly asserted without keywords support
         return new EmptyJsonSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
     intersectWithAll(other) {
@@ -81,18 +72,6 @@ class EmptyJsonSet {
     }
     intersectWithSome(other) {
         return new EmptyJsonSet(this.schemaOrigins.concat(other.schemaOrigins));
-    }
-    union(other) {
-        return other.unionWithEmpty(this);
-    }
-    unionWithEmpty(other) {
-        return new EmptyJsonSet(this.schemaOrigins.concat(other.schemaOrigins));
-    }
-    unionWithSome(other) {
-        return other.unionWithEmpty(this);
-    }
-    unionWithAll(other) {
-        return new AllJsonSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
     toRepresentations() {
         return [];
@@ -146,34 +125,6 @@ class SomeJsonSet {
             object: this.subsets.object.intersect(other.subsets.object),
             string: this.subsets.string.intersect(other.subsets.string)
         });
-    }
-    union(other) {
-        return other.unionWithSome(this);
-    }
-    unionWithEmpty(other) {
-        return new SomeJsonSet({
-            array: this.subsets.array.union(new array_set_1.EmptyArraySet(other.schemaOrigins)),
-            boolean: this.subsets.boolean.union(new boolean_set_1.EmptyBooleanSet(other.schemaOrigins)),
-            integer: this.subsets.integer.union(new integer_set_1.EmptyIntegerSet(other.schemaOrigins)),
-            null: this.subsets.null.union(new null_set_1.EmptyNullSet(other.schemaOrigins)),
-            number: this.subsets.number.union(new number_set_1.EmptyNumberSet(other.schemaOrigins)),
-            object: this.subsets.object.union(create_object_set_1.createEmptyObjectSet(this)),
-            string: this.subsets.string.union(new string_set_1.EmptyStringSet(other.schemaOrigins))
-        });
-    }
-    unionWithSome(other) {
-        return new SomeJsonSet({
-            array: this.subsets.array.union(other.subsets.array),
-            boolean: this.subsets.boolean.union(other.subsets.boolean),
-            integer: this.subsets.integer.union(other.subsets.integer),
-            null: this.subsets.null.union(other.subsets.null),
-            number: this.subsets.number.union(other.subsets.number),
-            object: this.subsets.object.union(other.subsets.object),
-            string: this.subsets.string.union(other.subsets.string)
-        });
-    }
-    unionWithAll(other) {
-        return new AllJsonSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
     toRepresentations() {
         return Object.keys(this.subsets).reduce((allRepresentations, subsetName) => allRepresentations.concat(this.subsets[subsetName].toRepresentations()), []);

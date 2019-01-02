@@ -8,25 +8,14 @@ class AllNumberSet {
         this.setType = 'number';
         this.type = 'all';
     }
-    intersect(otherSet) {
-        return otherSet.intersectWithAll(this);
+    intersect(other) {
+        return other.intersectWithAll(this);
     }
-    intersectWithAll(otherAllSet) {
-        const mergedSchemaOrigins = this.schemaOrigins.concat(otherAllSet.schemaOrigins);
-        return new AllNumberSet(mergedSchemaOrigins);
+    intersectWithAll(other) {
+        return new AllNumberSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
-    intersectWithEmpty(otherEmptySet) {
-        const mergedSchemaOrigins = this.schemaOrigins.concat(otherEmptySet.schemaOrigins);
-        return new EmptyNumberSet(mergedSchemaOrigins);
-    }
-    union(otherSet) {
-        return otherSet.unionWithAll(this);
-    }
-    unionWithAll(otherAllSet) {
-        return this.withAdditionalOrigins(otherAllSet.schemaOrigins);
-    }
-    unionWithEmpty(otherEmptySet) {
-        return this.withAdditionalOrigins(otherEmptySet.schemaOrigins);
+    intersectWithEmpty(other) {
+        return new EmptyNumberSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
     complement() {
         return new EmptyNumberSet(this.schemaOrigins);
@@ -39,9 +28,6 @@ class AllNumberSet {
                 value: 'number'
             }];
     }
-    withAdditionalOrigins(origins) {
-        return new AllNumberSet(this.schemaOrigins.concat(origins));
-    }
 }
 exports.AllNumberSet = AllNumberSet;
 class EmptyNumberSet {
@@ -50,32 +36,21 @@ class EmptyNumberSet {
         this.setType = 'number';
         this.type = 'empty';
     }
-    intersect(otherSet) {
-        return otherSet.intersectWithEmpty(this);
+    intersect(other) {
+        return other.intersectWithEmpty(this);
     }
-    intersectWithAll(otherAllSet) {
-        return this.withAdditionalOrigins(otherAllSet.schemaOrigins);
+    intersectWithAll(other) {
+        return new EmptyNumberSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
-    intersectWithEmpty(otherEmptySet) {
-        return otherEmptySet.withAdditionalOrigins(this.schemaOrigins);
-    }
-    union(otherSet) {
-        return otherSet.unionWithEmpty(this);
-    }
-    unionWithAll(otherAllSet) {
-        return new AllNumberSet(this.schemaOrigins.concat(otherAllSet.schemaOrigins));
-    }
-    unionWithEmpty(otherEmptySet) {
-        return this.withAdditionalOrigins(otherEmptySet.schemaOrigins);
+    intersectWithEmpty(other) {
+        // TODO: this can't be asserted without keywords support
+        return new EmptyNumberSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
     complement() {
         return new AllNumberSet(this.schemaOrigins);
     }
     toRepresentations() {
         return [];
-    }
-    withAdditionalOrigins(origins) {
-        return new EmptyNumberSet(this.schemaOrigins.concat(origins));
     }
 }
 exports.EmptyNumberSet = EmptyNumberSet;

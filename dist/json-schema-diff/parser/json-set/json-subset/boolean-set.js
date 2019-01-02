@@ -8,23 +8,14 @@ class AllBooleanSet {
         this.setType = 'boolean';
         this.type = 'all';
     }
-    intersect(otherSet) {
-        return otherSet.intersectWithAll(this);
+    intersect(other) {
+        return other.intersectWithAll(this);
     }
-    intersectWithAll(otherAllSet) {
-        return this.withAdditionalOrigins(otherAllSet.schemaOrigins);
+    intersectWithAll(other) {
+        return new AllBooleanSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
-    intersectWithEmpty(otherEmptySet) {
-        return new EmptyBooleanSet(this.schemaOrigins.concat(otherEmptySet.schemaOrigins));
-    }
-    union(otherSet) {
-        return otherSet.unionWithAll(this);
-    }
-    unionWithAll(otherAllSet) {
-        return this.withAdditionalOrigins(otherAllSet.schemaOrigins);
-    }
-    unionWithEmpty(otherEmptySet) {
-        return this.withAdditionalOrigins(otherEmptySet.schemaOrigins);
+    intersectWithEmpty(other) {
+        return new EmptyBooleanSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
     complement() {
         return new EmptyBooleanSet(this.schemaOrigins);
@@ -37,9 +28,6 @@ class AllBooleanSet {
                 value: 'boolean'
             }];
     }
-    withAdditionalOrigins(origins) {
-        return new AllBooleanSet(this.schemaOrigins.concat(origins));
-    }
 }
 exports.AllBooleanSet = AllBooleanSet;
 class EmptyBooleanSet {
@@ -48,32 +36,21 @@ class EmptyBooleanSet {
         this.setType = 'boolean';
         this.type = 'empty';
     }
-    intersect(otherSet) {
-        return otherSet.intersectWithEmpty(this);
+    intersect(other) {
+        return other.intersectWithEmpty(this);
     }
-    intersectWithAll(otherAllSet) {
-        return this.withAdditionalOrigins(otherAllSet.schemaOrigins);
+    intersectWithAll(other) {
+        return new EmptyBooleanSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
-    intersectWithEmpty(otherEmptySet) {
-        return this.withAdditionalOrigins(otherEmptySet.schemaOrigins);
-    }
-    union(otherSet) {
-        return otherSet.unionWithEmpty(this);
-    }
-    unionWithAll(otherAllSet) {
-        return new AllBooleanSet(this.schemaOrigins.concat(otherAllSet.schemaOrigins));
-    }
-    unionWithEmpty(otherEmptySet) {
-        return this.withAdditionalOrigins(otherEmptySet.schemaOrigins);
+    intersectWithEmpty(other) {
+        // TODO: this can't be asserted without keywords support
+        return new EmptyBooleanSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
     complement() {
         return new AllBooleanSet(this.schemaOrigins);
     }
     toRepresentations() {
         return [];
-    }
-    withAdditionalOrigins(origins) {
-        return new EmptyBooleanSet(this.schemaOrigins.concat(origins));
     }
 }
 exports.EmptyBooleanSet = EmptyBooleanSet;

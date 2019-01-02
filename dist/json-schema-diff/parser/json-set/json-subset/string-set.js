@@ -11,24 +11,11 @@ class AllStringSet {
     intersect(otherSet) {
         return otherSet.intersectWithAll(this);
     }
-    intersectWithAll(otherAllSet) {
-        const mergedSchemaOrigins = this.schemaOrigins.concat(otherAllSet.schemaOrigins);
-        return new AllStringSet(mergedSchemaOrigins);
+    intersectWithAll(other) {
+        return new AllStringSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
-    intersectWithEmpty(otherEmptySet) {
-        const mergedSchemaOrigins = this.schemaOrigins.concat(otherEmptySet.schemaOrigins);
-        return new EmptyStringSet(mergedSchemaOrigins);
-    }
-    union(otherSet) {
-        return otherSet.unionWithAll(this);
-    }
-    unionWithAll(otherAllSet) {
-        const mergedSchemaOrigins = this.schemaOrigins.concat(otherAllSet.schemaOrigins);
-        return new AllStringSet(mergedSchemaOrigins);
-    }
-    unionWithEmpty(otherEmptySet) {
-        const mergedSchemaOrigins = this.schemaOrigins.concat(otherEmptySet.schemaOrigins);
-        return new AllStringSet(mergedSchemaOrigins);
+    intersectWithEmpty(other) {
+        return new EmptyStringSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
     complement() {
         return new EmptyStringSet(this.schemaOrigins);
@@ -52,24 +39,12 @@ class EmptyStringSet {
     intersect(otherSet) {
         return otherSet.intersectWithEmpty(this);
     }
-    intersectWithAll(otherAllSet) {
-        const mergedSchemaOrigins = this.schemaOrigins.concat(otherAllSet.schemaOrigins);
-        return new EmptyStringSet(mergedSchemaOrigins);
+    intersectWithAll(other) {
+        return new EmptyStringSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
-    intersectWithEmpty(otherEmptySet) {
-        const mergedSchemaOrigins = this.schemaOrigins.concat(otherEmptySet.schemaOrigins);
-        return new EmptyStringSet(mergedSchemaOrigins);
-    }
-    union(otherSet) {
-        return otherSet.unionWithEmpty(this);
-    }
-    unionWithAll(otherAllSet) {
-        const mergedSchemaOrigins = this.schemaOrigins.concat(otherAllSet.schemaOrigins);
-        return new AllStringSet(mergedSchemaOrigins);
-    }
-    unionWithEmpty(otherEmptySet) {
-        const mergedSchemaOrigins = this.schemaOrigins.concat(otherEmptySet.schemaOrigins);
-        return new EmptyStringSet(mergedSchemaOrigins);
+    intersectWithEmpty(other) {
+        // TODO: this can't be asserted without keywords support
+        return new EmptyStringSet(this.schemaOrigins.concat(other.schemaOrigins));
     }
     complement() {
         return new AllStringSet(this.schemaOrigins);
