@@ -24,27 +24,49 @@ const parseSchemaProperties = (schemaProperties = {}, location) => {
 };
 const parseType = (schema, location) => {
     const types = toSimpleTypeArray(schema.type);
-    const schemaOrigins = [{
-            path: location.child('type').path,
-            type: location.schemaOriginType,
-            value: schema.type
-        }];
-    return { parsedValue: types, origins: schemaOrigins };
+    if (schema.type) {
+        return {
+            origins: [{
+                    path: location.child('type').path,
+                    type: location.schemaOriginType,
+                    value: schema.type
+                }],
+            parsedValue: types
+        };
+    }
+    return { parsedValue: types, origins: [] };
 };
-const parseSubsets = (schema, location) => {
+const parseRequiredKeyword = (schema, location) => {
+    if (schema.required) {
+        return {
+            origins: [{
+                    path: location.child('required').path,
+                    type: location.schemaOriginType,
+                    value: schema.required
+                }],
+            parsedValue: schema.required
+        };
+    }
+    return {
+        origins: [],
+        parsedValue: []
+    };
+};
+const generateDefaultMinPropertiesKeyword = () => ({ parsedValue: 0, origins: [] });
+const parseCoreSchemaMetaSchema = (schema, location) => {
     const type = parseType(schema, location);
     const additionalProperties = parseWithLocation(schema.additionalProperties, location.child('additionalProperties'));
     const properties = parseSchemaProperties(schema.properties, location.child('properties'));
+    const required = parseRequiredKeyword(schema, location);
+    const minProperties = generateDefaultMinPropertiesKeyword();
     const parsedSchemaKeywords = {
         additionalProperties,
+        minProperties,
         properties,
+        required,
         type
     };
     return create_json_set_1.createJsonSet(parsedSchemaKeywords);
-};
-// tslint:disable-next-line
-const parseCoreSchemaMetaSchema = (schema, location) => {
-    return parseSubsets(schema, location);
 };
 const parseBooleanSchema = (schema, location) => {
     const schemaOrigins = [{

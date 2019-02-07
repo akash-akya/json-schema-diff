@@ -1,3 +1,18 @@
+<a name="0.9.0"></a>
+# [0.9.0](https://bitbucket.org/atlassian/json-schema-diff/compare/0.8.3...0.9.0) (2019-02-07)
+
+
+### Features
+
+* add support for required keyword ([2290b74](https://bitbucket.org/atlassian/json-schema-diff/commits/2290b74))
+
+
+### BREAKING CHANGES
+
+* Prior to this change the nodejs api returned added and removed differences detected as as an array of DiffResultDifference objects. Now the added and removed differences are returned as two seperate JsonSchema objects. In addition all the property names of the DiffResult object have been renamed. To migrate, update code that consumes the DiffResult object returned by the API to the new property names and types.
+
+
+
 <a name="0.8.3"></a>
 ## [0.8.3](https://bitbucket.org/atlassian/json-schema-diff/compare/0.8.2...0.8.3) (2019-01-02)
 

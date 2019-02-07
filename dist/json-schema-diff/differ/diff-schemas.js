@@ -9,26 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const RefParser = require("json-schema-ref-parser");
-const _ = require("lodash");
 const util_1 = require("util");
-const parse_as_json_set_1 = require("../parser/parse-as-json-set");
+const parse_as_json_set_1 = require("./parser/parse-as-json-set");
 const validate_schemas_1 = require("./validate-schemas");
-const representationsToAddedDifferences = (representations) => representations.map((representation) => ({
-    addedByDestinationSchema: true,
-    destinationValues: representation.destinationValues,
-    removedByDestinationSchema: false,
-    sourceValues: representation.sourceValues,
-    type: 'add.type',
-    value: representation.value
-}));
-const representationsToRemovedDifferences = (representations) => representations.map((representation) => ({
-    addedByDestinationSchema: false,
-    destinationValues: representation.destinationValues,
-    removedByDestinationSchema: true,
-    sourceValues: representation.sourceValues,
-    type: 'remove.type',
-    value: representation.value
-}));
 exports.dereferenceSchema = (schema) => __awaiter(this, void 0, void 0, function* () {
     const refParser = new RefParser();
     return util_1.isBoolean(schema)
@@ -46,16 +29,10 @@ exports.diffSchemas = (sourceSchema, destinationSchema) => __awaiter(this, void 
     const intersectionOfSetsComplement = intersectionOfSets.complement();
     const addedToDestinationSet = intersectionOfSetsComplement.intersect(destinationSet);
     const removedFromDestinationSet = intersectionOfSetsComplement.intersect(sourceSet);
-    const addedRepresentations = addedToDestinationSet.toRepresentations();
-    const removedRepresentations = removedFromDestinationSet.toRepresentations();
-    const identicalRepresentations = _.intersectionWith(addedRepresentations, removedRepresentations, _.isEqual);
-    const uniqueDifferenceAddedRepresentations = _.differenceWith(addedRepresentations, identicalRepresentations, _.isEqual);
-    const uniqueDifferenceRemovedRepresentations = _.differenceWith(removedRepresentations, identicalRepresentations, _.isEqual);
-    const addedDifferences = representationsToAddedDifferences(uniqueDifferenceAddedRepresentations);
-    const removedDifferences = representationsToRemovedDifferences(uniqueDifferenceRemovedRepresentations);
     return {
-        addedByDestinationSchema: addedDifferences.length > 0,
-        differences: addedDifferences.concat(removedDifferences),
-        removedByDestinationSchema: removedDifferences.length > 0
+        addedJsonSchema: addedToDestinationSet.toJsonSchema(),
+        additionsFound: addedToDestinationSet.type !== 'empty',
+        removalsFound: removedFromDestinationSet.type !== 'empty',
+        removedJsonSchema: removedFromDestinationSet.toJsonSchema()
     };
 });

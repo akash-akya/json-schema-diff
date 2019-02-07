@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Ajv = require("ajv");
-const json_schema_draft_7_schema_1 = require("./json-schema-draft-7-schema");
+// tslint:disable-next-line:no-var-requires no-submodule-imports
+const jsonSchemaDraft7Schema = require('json-schema-spec-types/lib/json-schema-draft-07-schema');
 const validateJsonSchema = (schema) => {
     const ajv = new Ajv();
-    const validate = ajv.compile(json_schema_draft_7_schema_1.jsonSchemaDraft7Schema);
+    const validate = ajv.compile(jsonSchemaDraft7Schema);
     const valid = validate(schema);
     if (valid) {
         return { isValid: true };

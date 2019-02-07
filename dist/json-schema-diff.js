@@ -24,7 +24,10 @@ class JsonSchemaDiff {
         }
     }
     static containsBreakingChanges(diffResult) {
-        return diffResult.removedByDestinationSchema;
+        return diffResult.removalsFound;
+    }
+    static containsNonBreakingChanges(diffResult) {
+        return diffResult.additionsFound;
     }
     diffFiles(sourceSchemaFile, destinationSchemaFile) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -49,10 +52,10 @@ class JsonSchemaDiff {
     }
     reportDiffResult(diffResult) {
         if (JsonSchemaDiff.containsBreakingChanges(diffResult)) {
-            this.reporter.reportFailureWithDifferences(diffResult.differences);
+            this.reporter.reportFailureWithBreakingChanges(diffResult);
         }
-        else if (diffResult.differences.length > 0) {
-            this.reporter.reportSuccessWithDifferences(diffResult.differences);
+        else if (JsonSchemaDiff.containsNonBreakingChanges(diffResult)) {
+            this.reporter.reportNonBreakingChanges(diffResult);
         }
         else {
             this.reporter.reportNoDifferencesFound();
