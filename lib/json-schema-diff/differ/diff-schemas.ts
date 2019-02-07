@@ -21,8 +21,8 @@ export const diffSchemas = async (sourceSchema: JsonSchema,
 
     await validateSchemas(sourceSchema, destinationSchema);
 
-    const sourceSet = parseAsJsonSet(dereferencedSourceSchema, 'source');
-    const destinationSet = parseAsJsonSet(dereferencedDestinationSchema, 'destination');
+    const sourceSet = parseAsJsonSet(dereferencedSourceSchema);
+    const destinationSet = parseAsJsonSet(dereferencedDestinationSchema);
 
     const intersectionOfSets = sourceSet.intersect(destinationSet);
     const intersectionOfSetsComplement = intersectionOfSets.complement();

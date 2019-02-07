@@ -5,11 +5,6 @@ import {JsonSchema} from 'json-schema-spec-types';
 declare namespace JsonSchemaDiff {
     export type Path = Array<string | number>;
 
-    export interface DiffResultOriginValue {
-        path: Path;
-        value: any;
-    }
-
     export interface DiffResult {
         additionsFound: boolean;
         addedJsonSchema: JsonSchema;

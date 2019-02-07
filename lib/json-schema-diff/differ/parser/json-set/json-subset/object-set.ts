@@ -9,14 +9,6 @@ export class ObjectSet implements Set<'object'> {
     public constructor(private readonly objectSubsets: ObjectSubset[]) {
     }
 
-    public toAll(): Set<'object'> {
-        throw new Error('not implemented');
-    }
-
-    public toEmpty(): Set<'object'> {
-        throw new Error('not implemented');
-    }
-
     public get type() {
         if (this.hasAtLeastOneObjectSubsetOfType('all')) {
             return 'all';
@@ -27,11 +19,6 @@ export class ObjectSet implements Set<'object'> {
         }
 
         return 'empty';
-    }
-
-    public get schemaOrigins() {
-        // TODO: Delete schema origins
-        return this.objectSubsets[0].schemaOrigins;
     }
 
     public complement(): Set<'object'> {

@@ -1,9 +1,6 @@
 import {DiffResult} from '../../lib/api-types';
-import {DiffJsonSchema} from '../../lib/json-schema-diff/differ/parser/json-set/diff-json-schema';
 import {Reporter} from '../../lib/json-schema-diff/reporter';
 import {WrappedLog} from '../../lib/json-schema-diff/reporter/wrapped-log';
-import {diffJsonSchemaBuilder} from './support/builders/diff-json-schema-builder';
-import {diffResultOriginsBuilder} from './support/builders/diff-result-origins-builder';
 
 describe('reporter', () => {
     let reporter: Reporter;
@@ -26,21 +23,11 @@ describe('reporter', () => {
     });
 
     it('should report breaking changes with result', async () => {
-        const removedJsonSchema: DiffJsonSchema = diffJsonSchemaBuilder
-            .withSourceOrigins([diffResultOriginsBuilder
-                .withPath(['type'])
-                .withValue(undefined)])
-            .withDestinationOrigins([diffResultOriginsBuilder
-                .withPath(['type'])
-                .withValue('number')])
-            .withSchema({type: ['string', 'object', 'null', 'array', 'boolean', 'integer']})
-            .build();
-        const addedJsonSchema: DiffJsonSchema = false;
         const diffResult: DiffResult = {
-            addedJsonSchema,
+            addedJsonSchema: false,
             additionsFound: false,
             removalsFound: true,
-            removedJsonSchema
+            removedJsonSchema: {type: ['string', 'object', 'null', 'array', 'boolean', 'integer']}
         };
 
         reporter.reportFailureWithBreakingChanges(diffResult);
@@ -51,21 +38,11 @@ describe('reporter', () => {
     });
 
     it('should report non-breaking changes with result when called', async () => {
-        const addedJsonSchema: DiffJsonSchema = diffJsonSchemaBuilder
-            .withSourceOrigins([diffResultOriginsBuilder
-                .withPath(['type'])
-                .withValue('string')])
-            .withDestinationOrigins([diffResultOriginsBuilder
-                .withPath(['type'])
-                .withValue('number')])
-            .withSchema({type: ['number']})
-            .build();
-        const removedJsonSchema: DiffJsonSchema = false;
         const diffResult: DiffResult = {
-            addedJsonSchema,
+            addedJsonSchema: {type: ['number']},
             additionsFound: true,
             removalsFound: false,
-            removedJsonSchema
+            removedJsonSchema: false
         };
 
         reporter.reportNonBreakingChanges(diffResult);

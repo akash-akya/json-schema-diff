@@ -3,14 +3,12 @@ import {
 } from '../object-subset';
 
 const isMinPropertiesBiggerThanDefinedProperties = (config: SomeObjectSubsetConfig): boolean => {
-    const minProperties = config.minProperties.parsedValue;
-
     const numberOfDefinedPropertiesInSchema = Object.keys(config.properties)
         .map((propertyName) => config.properties[propertyName])
         .filter((propertySchema) => propertySchema.type !== 'empty')
         .length;
 
-    return minProperties > numberOfDefinedPropertiesInSchema;
+    return config.minProperties > numberOfDefinedPropertiesInSchema;
 };
 
 const areAdditionalPropertiesNotAllowed = (config: SomeObjectSubsetConfig): boolean =>
@@ -21,7 +19,7 @@ const isMinPropertiesAndAdditionalPropertiesContradiction = (config: SomeObjectS
 };
 
 const isRequiredPropertyContradiction = (config: SomeObjectSubsetConfig): boolean => {
-    return config.required.parsedValue.some((propertyName) => {
+    return config.required.some((propertyName) => {
         const propertySchema = config.properties[propertyName] || config.additionalProperties;
         return propertySchema.type === 'empty';
     });

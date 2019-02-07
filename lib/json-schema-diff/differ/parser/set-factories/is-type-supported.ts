@@ -1,5 +1,4 @@
 import {SimpleTypes} from 'json-schema-spec-types';
-import {ParsedTypeKeyword} from '../json-set/set';
 
-export const isTypeSupported = (parsedTypeKeyword: ParsedTypeKeyword, type: SimpleTypes): boolean =>
-    parsedTypeKeyword.parsedValue.indexOf(type) >= 0;
+export const isTypeSupported = (parsedTypeKeyword: SimpleTypes[], type: SimpleTypes): boolean =>
+    parsedTypeKeyword.indexOf(type) >= 0;

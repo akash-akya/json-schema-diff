@@ -1,17 +1,19 @@
 import {CoreSchemaMetaSchema, JsonSchema, JsonSchemaMap, SimpleTypes} from 'json-schema-spec-types';
 import {isBoolean, isUndefined} from 'util';
-import {
-    allSchemaTypes, ParsedMinPropertiesKeyword,
-    ParsedPropertiesKeyword, ParsedRequiredKeyword,
-    ParsedSchemaKeywords,
-    ParsedTypeKeyword,
-    SchemaOrigin,
-    SchemaOriginType, Set
-} from './json-set/set';
-import {SchemaLocation} from './schema-location';
-import {createAllJsonSet, createEmptyJsonSet, createJsonSet} from './set-factories/create-json-set';
+import {allSchemaTypes, ParsedPropertiesKeyword, Set} from './json-set/set';
+import {createAllJsonSet, createEmptyJsonSet, createSomeJsonSet} from './set-factories/create-json-set';
 
-const toSimpleTypeArray = (type?: SimpleTypes | SimpleTypes[]): SimpleTypes[] => {
+const parseSchemaProperties = (schemaProperties: JsonSchemaMap = {}): ParsedPropertiesKeyword => {
+    const objectSetProperties: ParsedPropertiesKeyword = {};
+
+    for (const propertyName of Object.keys(schemaProperties)) {
+        const propertySchema = schemaProperties[propertyName];
+        objectSetProperties[propertyName] = parseSchemaOrUndefinedAsJsonSet(propertySchema);
+    }
+    return objectSetProperties;
+};
+
+const parseType = (type: SimpleTypes | SimpleTypes[] | undefined): SimpleTypes[] => {
     if (!type) {
         return allSchemaTypes;
     }
@@ -23,91 +25,37 @@ const toSimpleTypeArray = (type?: SimpleTypes | SimpleTypes[]): SimpleTypes[] =>
     return type;
 };
 
-const parseSchemaProperties = (
-    schemaProperties: JsonSchemaMap = {}, location: SchemaLocation
-): ParsedPropertiesKeyword => {
-    const objectSetProperties: ParsedPropertiesKeyword = {};
+const parseRequiredKeyword = (schema: CoreSchemaMetaSchema): string[] => schema.required || [];
 
-    for (const propertyName of Object.keys(schemaProperties)) {
-        const propertySchema = schemaProperties[propertyName];
-        const propertyLocation = location.child(propertyName);
-        objectSetProperties[propertyName] = parseWithLocation(propertySchema, propertyLocation);
-    }
-    return objectSetProperties;
-};
+const generateDefaultMinPropertiesKeyword = (): number => 0;
 
-const parseType = (schema: CoreSchemaMetaSchema, location: SchemaLocation): ParsedTypeKeyword => {
-    const types = toSimpleTypeArray(schema.type);
-
-    if (schema.type) {
-        return {
-            origins: [{
-                path: location.child('type').path,
-                type: location.schemaOriginType,
-                value: schema.type
-            }],
-            parsedValue: types
-        };
-    }
-
-    return {parsedValue: types, origins: []};
-};
-
-const parseRequiredKeyword = (schema: CoreSchemaMetaSchema, location: SchemaLocation): ParsedRequiredKeyword => {
-    if (schema.required) {
-        return {
-            origins: [{
-                path: location.child('required').path,
-                type: location.schemaOriginType,
-                value: schema.required
-            }],
-            parsedValue: schema.required
-        };
-    }
-
-    return {
-        origins: [],
-        parsedValue: []
-    };
-};
-
-const generateDefaultMinPropertiesKeyword = (): ParsedMinPropertiesKeyword => ({parsedValue: 0, origins: []});
-
-const parseCoreSchemaMetaSchema = (schema: CoreSchemaMetaSchema, location: SchemaLocation): Set<'json'> => {
-    const type = parseType(schema, location);
-    const additionalProperties = parseWithLocation(
-        schema.additionalProperties, location.child('additionalProperties')
-    );
-    const properties = parseSchemaProperties(schema.properties, location.child('properties'));
-    const required = parseRequiredKeyword(schema, location);
+const parseCoreSchemaMetaSchema = (schema: CoreSchemaMetaSchema): Set<'json'> => {
+    const type = parseType(schema.type);
+    const additionalProperties = parseSchemaOrUndefinedAsJsonSet(schema.additionalProperties);
+    const properties = parseSchemaProperties(schema.properties);
+    const required = parseRequiredKeyword(schema);
     const minProperties = generateDefaultMinPropertiesKeyword();
-    const parsedSchemaKeywords: ParsedSchemaKeywords = {
+
+    return createSomeJsonSet({
         additionalProperties,
         minProperties,
         properties,
         required,
         type
-    };
-
-    return createJsonSet(parsedSchemaKeywords);
+    });
 };
 
-const parseBooleanSchema = (schema: boolean | undefined, location: SchemaLocation): Set<'json'> => {
-    const schemaOrigins: SchemaOrigin[] = [{
-        path: location.path,
-        type: location.schemaOriginType,
-        value: schema
-    }];
+const parseBooleanSchema = (schema: boolean | undefined): Set<'json'> => {
     const allowsAllJsonValues = isUndefined(schema) ? true : schema;
-    return allowsAllJsonValues ? createAllJsonSet(schemaOrigins) : createEmptyJsonSet(schemaOrigins);
+    return allowsAllJsonValues ? createAllJsonSet() : createEmptyJsonSet();
 };
 
-const parseWithLocation = (schema: JsonSchema | undefined, location: SchemaLocation): Set<'json'> => {
+const parseSchemaOrUndefinedAsJsonSet = (schema: JsonSchema | undefined): Set<'json'> => {
     return (isBoolean(schema) || isUndefined(schema))
-        ? parseBooleanSchema(schema, location)
-        : parseCoreSchemaMetaSchema(schema, location);
+        ? parseBooleanSchema(schema)
+        : parseCoreSchemaMetaSchema(schema);
 };
 
-export const parseAsJsonSet = (schema: JsonSchema, originType: SchemaOriginType): Set<'json'> => {
-    return parseWithLocation(schema, SchemaLocation.createRoot(originType));
+export const parseAsJsonSet = (schema: JsonSchema): Set<'json'> => {
+    return parseSchemaOrUndefinedAsJsonSet(schema);
 };

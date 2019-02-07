@@ -36,21 +36,7 @@ describe('api', () => {
             const resultWithoutTypes = result as any;
 
             expect(resultWithoutTypes).toEqual({
-                addedJsonSchema: {
-                    'type': [ jasmine.any(String) ],
-                    'x-destination-origins': [
-                        {
-                            path: [ jasmine.any(String) ],
-                            value: [ jasmine.any(String), jasmine.any(String) ]
-                        }
-                    ],
-                    'x-source-origins': [
-                        {
-                            path: [ jasmine.any(String) ],
-                            value: jasmine.any(String)
-                        }
-                    ]
-                },
+                addedJsonSchema: {type: [jasmine.any(String)]},
                 additionsFound: jasmine.any(Boolean),
                 removalsFound: jasmine.any(Boolean),
                 removedJsonSchema: jasmine.any(Boolean)
@@ -68,21 +54,7 @@ describe('api', () => {
                 addedJsonSchema: jasmine.any(Boolean),
                 additionsFound: jasmine.any(Boolean),
                 removalsFound: jasmine.any(Boolean),
-                removedJsonSchema: {
-                    'type': [ jasmine.any(String) ],
-                    'x-destination-origins': [
-                        {
-                            path: [ jasmine.any(String) ],
-                            value: jasmine.any(String)
-                        }
-                    ],
-                    'x-source-origins': [
-                        {
-                            path: [ jasmine.any(String) ],
-                            value: [ jasmine.any(String), jasmine.any(String) ]
-                        }
-                    ]
-                }
+                removedJsonSchema: {type: [jasmine.any(String)]}
             });
         });
 

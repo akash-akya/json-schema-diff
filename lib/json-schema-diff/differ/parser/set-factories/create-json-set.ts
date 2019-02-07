@@ -1,9 +1,9 @@
-import {AllJsonSet, EmptyJsonSet, SomeJsonSet, TypeSets} from '../json-set/json-set';
-import {ParsedSchemaKeywords, SchemaOrigin, Set} from '../json-set/set';
+import {allJsonSet, emptyJsonSet, SomeJsonSet, TypeSets} from '../json-set/json-set';
+import {ParsedSchemaKeywords, Set} from '../json-set/set';
 import {createObjectSet} from './create-object-set';
 import {createTypeSet} from './create-type-set';
 
-export const createJsonSet = (parsedSchemaKeywords: ParsedSchemaKeywords): Set<'json'> => {
+export const createSomeJsonSet = (parsedSchemaKeywords: ParsedSchemaKeywords): Set<'json'> => {
     const typeSets: TypeSets = {
         array: createTypeSet('array', parsedSchemaKeywords),
         boolean: createTypeSet('boolean', parsedSchemaKeywords),
@@ -17,10 +17,10 @@ export const createJsonSet = (parsedSchemaKeywords: ParsedSchemaKeywords): Set<'
     return new SomeJsonSet(typeSets);
 };
 
-export const createAllJsonSet = (schemaOrigins: SchemaOrigin[]): Set<'json'> => {
-    return new AllJsonSet(schemaOrigins);
+export const createAllJsonSet = (): Set<'json'> => {
+    return allJsonSet;
 };
 
-export const createEmptyJsonSet = (schemaOrigins: SchemaOrigin[]): Set<'json'> => {
-    return new EmptyJsonSet(schemaOrigins);
+export const createEmptyJsonSet = (): Set<'json'> => {
+    return emptyJsonSet;
 };

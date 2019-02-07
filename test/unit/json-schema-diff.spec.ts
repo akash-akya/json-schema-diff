@@ -1,9 +1,6 @@
 import {JsonSchema} from 'json-schema-spec-types';
 import {DiffResult} from '../../lib/api-types';
-import {DiffJsonSchema} from '../../lib/json-schema-diff/differ/parser/json-set/diff-json-schema';
 import {expectToFail} from '../support/expect-to-fail';
-import {diffJsonSchemaBuilder} from './support/builders/diff-json-schema-builder';
-import {diffResultOriginsBuilder} from './support/builders/diff-result-origins-builder';
 import {createJsonSchemaDiffWithMocks} from './support/create-json-schema-diff';
 import {createMockFileSystem, MockFileSystem} from './support/mocks/mock-file-system';
 import {createMockReporter, MockReporter} from './support/mocks/mock-reporter';
@@ -121,21 +118,11 @@ describe('json-schema-diff', () => {
 
             await expectToFail(invokeDiffFilesWithContents(sourceSchema, destinationSchema));
 
-            const removedJsonSchema: DiffJsonSchema = diffJsonSchemaBuilder
-                .withSourceOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue(['string', 'object'])])
-                .withDestinationOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue('object')])
-                .withSchema({type: ['string']})
-                .build();
-            const addedJsonSchema: DiffJsonSchema = false;
             const expectedDiffResult: DiffResult = {
-                addedJsonSchema,
+                addedJsonSchema: false,
                 additionsFound: false,
                 removalsFound: true,
-                removedJsonSchema
+                removedJsonSchema: {type: ['string']}
             };
 
             expect(mockReporter.reportNonBreakingChanges).not.toHaveBeenCalled();
@@ -148,21 +135,11 @@ describe('json-schema-diff', () => {
 
             await invokeDiffFilesWithContents(sourceSchema, destinationSchema);
 
-            const addedJsonSchema: DiffJsonSchema = diffJsonSchemaBuilder
-                .withDestinationOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue(['string', 'object'])])
-                .withSourceOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue('object')])
-                .withSchema({type: ['string']})
-                .build();
-            const removedJsonSchema: DiffJsonSchema = false;
             const expectedDiffResult: DiffResult = {
-                addedJsonSchema,
+                addedJsonSchema: {type: ['string']},
                 additionsFound: true,
                 removalsFound: false,
-                removedJsonSchema
+                removedJsonSchema: false
             };
 
             expect(mockReporter.reportFailureWithBreakingChanges).not.toHaveBeenCalled();

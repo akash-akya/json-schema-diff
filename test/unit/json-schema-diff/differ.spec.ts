@@ -1,10 +1,8 @@
 import {JsonSchema, SimpleTypes} from 'json-schema-spec-types';
 import {CoreDiffJsonSchema} from '../../../lib/json-schema-diff/differ/parser/json-set/diff-json-schema';
-import {diffJsonSchemaBuilder} from '../support/builders/diff-json-schema-builder';
-import {diffResultOriginsBuilder} from '../support/builders/diff-result-origins-builder';
 import {invokeDiff, invokeDiffAndExpectToFail} from '../support/invoke-diff';
 
-const allTypesSchema: CoreDiffJsonSchema = {
+export const allTypes: CoreDiffJsonSchema = {
     type: ['array', 'boolean', 'integer', 'null', 'number', 'object', 'string']
 };
 
@@ -113,16 +111,9 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationsSchema);
 
+            const allNumbers: JsonSchema = {type: ['number']};
             expect(diffResult.addedJsonSchema).toEqual(false);
-            expect(diffResult.removedJsonSchema).toEqual(diffJsonSchemaBuilder
-                .withSchema({type: ['number']})
-                .withDestinationOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue(['string'])])
-                .withSourceOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue(['string', 'number'])])
-                .build());
+            expect(diffResult.removedJsonSchema).toEqual(allNumbers);
         });
 
         it('should find an add type difference when an array is added', async () => {
@@ -131,15 +122,8 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationsSchema);
 
-            expect(diffResult.addedJsonSchema).toEqual(diffJsonSchemaBuilder
-                .withSchema({type: ['array']})
-                .withDestinationOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue(['number', 'array'])])
-                .withSourceOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue('number')])
-                .build());
+            const allArrays: JsonSchema = {type: ['array']};
+            expect(diffResult.addedJsonSchema).toEqual(allArrays);
             expect(diffResult.removedJsonSchema).toEqual(false);
         });
 
@@ -149,15 +133,8 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationsSchema);
 
-            expect(diffResult.addedJsonSchema).toEqual(diffJsonSchemaBuilder
-                .withSchema({type: ['boolean']})
-                .withDestinationOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue(['number', 'boolean'])])
-                .withSourceOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue('number')])
-                .build());
+            const allBooleans: JsonSchema = {type: ['boolean']};
+            expect(diffResult.addedJsonSchema).toEqual(allBooleans);
             expect(diffResult.removedJsonSchema).toEqual(false);
         });
 
@@ -167,15 +144,8 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationsSchema);
 
-            expect(diffResult.addedJsonSchema).toEqual(diffJsonSchemaBuilder
-                .withSchema({type: ['integer']})
-                .withDestinationOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue(['number', 'integer'])])
-                .withSourceOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue('number')])
-                .build());
+            const allIntegers: JsonSchema = {type: ['integer']};
+            expect(diffResult.addedJsonSchema).toEqual(allIntegers);
             expect(diffResult.removedJsonSchema).toEqual(false);
         });
 
@@ -185,15 +155,8 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationsSchema);
 
-            expect(diffResult.addedJsonSchema).toEqual(diffJsonSchemaBuilder
-                .withSchema({type: ['null']})
-                .withDestinationOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue(['number', 'null'])])
-                .withSourceOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue('number')])
-                .build());
+            const allNulls: JsonSchema = {type: ['null']};
+            expect(diffResult.addedJsonSchema).toEqual(allNulls);
             expect(diffResult.removedJsonSchema).toEqual(false);
         });
 
@@ -203,15 +166,8 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationsSchema);
 
-            expect(diffResult.addedJsonSchema).toEqual(diffJsonSchemaBuilder
-                .withSchema({type: ['number']})
-                .withDestinationOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue(['string', 'number'])])
-                .withSourceOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue('string')])
-                .build());
+            const allNumbers: JsonSchema = {type: ['number']};
+            expect(diffResult.addedJsonSchema).toEqual(allNumbers);
             expect(diffResult.removedJsonSchema).toEqual(false);
         });
 
@@ -221,17 +177,8 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationsSchema);
 
-            expect(diffResult.addedJsonSchema).toEqual(diffJsonSchemaBuilder
-                .withSchema({type: ['object']})
-                .withDestinationOrigins([
-                    diffResultOriginsBuilder
-                        .withPath(['type'])
-                        .withValue(['number', 'object'])
-                ])
-                .withSourceOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue('number')])
-                .build());
+            const allObjects: JsonSchema = {type: ['object']};
+            expect(diffResult.addedJsonSchema).toEqual(allObjects);
             expect(diffResult.removedJsonSchema).toEqual(false);
         });
 
@@ -241,15 +188,8 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationsSchema);
 
-            expect(diffResult.addedJsonSchema).toEqual(diffJsonSchemaBuilder
-                .withSchema({type: ['string']})
-                .withDestinationOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue(['number', 'string'])])
-                .withSourceOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue('number')])
-                .build());
+            const allStrings: JsonSchema = {type: ['string']};
+            expect(diffResult.addedJsonSchema).toEqual(allStrings);
             expect(diffResult.removedJsonSchema).toEqual(false);
         });
 
@@ -259,15 +199,10 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationsSchema);
 
-            const baseDiffJsonSchema = diffJsonSchemaBuilder
-                .withDestinationOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue('string')])
-                .withSourceOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue('number')]);
-            expect(diffResult.addedJsonSchema).toEqual(baseDiffJsonSchema.withSchema({type: ['string']}).build());
-            expect(diffResult.removedJsonSchema).toEqual(baseDiffJsonSchema.withSchema({type: ['number']}).build());
+            const allStrings: JsonSchema = {type: ['string']};
+            const allNumbers: JsonSchema = {type: ['number']};
+            expect(diffResult.addedJsonSchema).toEqual(allStrings);
+            expect(diffResult.removedJsonSchema).toEqual(allNumbers);
         });
 
         it('should find no differences when given two empty schemas', async () => {
@@ -286,16 +221,9 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationsSchema);
 
+            const allBooleansAndStrings: JsonSchema = {type: ['boolean', 'string']};
             expect(diffResult.addedJsonSchema).toEqual(false);
-            expect(diffResult.removedJsonSchema).toEqual(diffJsonSchemaBuilder
-                .withSchema({type: ['boolean', 'string']})
-                .withDestinationOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue(['number'])])
-                .withSourceOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue(['number', 'string', 'boolean'])])
-                .build());
+            expect(diffResult.removedJsonSchema).toEqual(allBooleansAndStrings);
         });
 
         it('should find multiple differences when multiple types are added', async () => {
@@ -304,15 +232,8 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationsSchema);
 
-            expect(diffResult.addedJsonSchema).toEqual(diffJsonSchemaBuilder
-                .withSchema({type: ['boolean', 'string']})
-                .withSourceOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue(['number'])])
-                .withDestinationOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue(['number', 'string', 'boolean'])])
-                .build());
+            const allBooleansAndStrings: JsonSchema = {type: ['boolean', 'string']};
+            expect(diffResult.addedJsonSchema).toEqual(allBooleansAndStrings);
             expect(diffResult.removedJsonSchema).toEqual(false);
         });
 
@@ -322,13 +243,9 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationsSchema);
 
+            const allStrings: JsonSchema = {type: ['string']};
             expect(diffResult.addedJsonSchema).toEqual(false);
-            expect(diffResult.removedJsonSchema).toEqual(diffJsonSchemaBuilder
-                .withSchema({type: ['string']})
-                .withDestinationOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue(['integer', 'number', 'object', 'null', 'boolean', 'array'])])
-                .build());
+            expect(diffResult.removedJsonSchema).toEqual(allStrings);
         });
     });
 
@@ -349,11 +266,7 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
-            expect(diffResult.addedJsonSchema).toEqual(diffJsonSchemaBuilder
-                .withSchema(allTypesSchema)
-                .withDestinationOrigins([diffResultOriginsBuilder.withPath([]).withValue(true)])
-                .withSourceOrigins([diffResultOriginsBuilder.withPath([]).withValue(false)])
-                .build());
+            expect(diffResult.addedJsonSchema).toEqual(allTypes);
             expect(diffResult.removedJsonSchema).toEqual(false);
         });
 
@@ -366,15 +279,8 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
-            expect(diffResult.addedJsonSchema).toEqual(diffJsonSchemaBuilder
-                .withSchema({
-                    type: ['object']
-                })
-                .withDestinationOrigins([diffResultOriginsBuilder.withValue(true).withPath([])])
-                .withSourceOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue(['string', 'array', 'number', 'integer', 'boolean', 'null'])])
-                .build());
+            const allObjects: JsonSchema = {type: ['object']};
+            expect(diffResult.addedJsonSchema).toEqual(allObjects);
             expect(diffResult.removedJsonSchema).toEqual(false);
         });
 
@@ -384,16 +290,9 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
+            const allStrings: JsonSchema = {type: ['string']};
             expect(diffResult.addedJsonSchema).toEqual(false);
-            expect(diffResult.removedJsonSchema).toEqual(diffJsonSchemaBuilder
-                .withSchema({
-                    type: ['string']
-                })
-                .withDestinationOrigins([diffResultOriginsBuilder.withValue(false).withPath([])])
-                .withSourceOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue('string')])
-                .build());
+            expect(diffResult.removedJsonSchema).toEqual(allStrings);
         });
 
         it('should find an add difference when schema is changed from false to some type', async () => {
@@ -402,15 +301,8 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
-            expect(diffResult.addedJsonSchema).toEqual(diffJsonSchemaBuilder
-                .withSchema({
-                    type: ['string']
-                })
-                .withSourceOrigins([diffResultOriginsBuilder.withValue(false).withPath([])])
-                .withDestinationOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue('string')])
-                .build());
+            const allStrings: JsonSchema = {type: ['string']};
+            expect(diffResult.addedJsonSchema).toEqual(allStrings);
             expect(diffResult.removedJsonSchema).toEqual(false);
         });
     });
@@ -428,24 +320,13 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
-            const allObjectsWithAtLeastOnePropertyOfAnyType = diffJsonSchemaBuilder
-                .withSchema({
-                    additionalProperties:
-                        diffJsonSchemaBuilder
-                            .withSchema(allTypesSchema)
-                            .withDestinationOrigins([diffResultOriginsBuilder
-                                .withPath(['additionalProperties'])
-                                .withValue(false)])
-                            .withSourceOrigins([diffResultOriginsBuilder
-                                .withPath(['additionalProperties'])
-                                .withValue(true)])
-                            .build(),
-                    minProperties: 1,
-                    type: ['object']
-                })
-                .build();
+            const allObjectsWithAtLeastOneProperty: JsonSchema = {
+                additionalProperties: allTypes,
+                minProperties: 1,
+                type: ['object']
+            };
             expect(diffResult.addedJsonSchema).toEqual(false);
-            expect(diffResult.removedJsonSchema).toEqual(allObjectsWithAtLeastOnePropertyOfAnyType);
+            expect(diffResult.removedJsonSchema).toEqual(allObjectsWithAtLeastOneProperty);
         });
 
         it('should infer that all objects are supported when no constraints are applied by properties', async () => {
@@ -462,29 +343,16 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
-            const allObjectsWithAtLeastOneProperty = diffJsonSchemaBuilder
-                .withSchema({
-                    additionalProperties:
-                        diffJsonSchemaBuilder
-                            .withSchema(allTypesSchema)
-                            .withDestinationOrigins([diffResultOriginsBuilder
-                                .withPath(['additionalProperties'])
-                                .withValue(false)])
-                            .withSourceOrigins([
-                                diffResultOriginsBuilder
-                                    .withPath(['additionalProperties'])
-                                    .withValue(undefined)
-                            ])
-                            .build(),
-                    minProperties: 1,
-                    type: ['object']
-                })
-                .build();
+            const allObjectsWithAtLeastOneProperty: JsonSchema = {
+                additionalProperties: allTypes,
+                minProperties: 1,
+                type: ['object']
+            };
             expect(diffResult.addedJsonSchema).toEqual(false);
             expect(diffResult.removedJsonSchema).toEqual(allObjectsWithAtLeastOneProperty);
         });
 
-        it('should infer that all objects are supported when no constraints are applied by properties', async () => {
+        it('should infer empty object set when required contradicts properties', async () => {
             const sourceSchema: JsonSchema = {
                 additionalProperties: false,
                 properties: {
@@ -500,20 +368,7 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
-            const allObjects = diffJsonSchemaBuilder
-                .withSchema({type: ['object']})
-                .withDestinationOrigins([diffResultOriginsBuilder
-                    .withPath(['type'])
-                    .withValue('object')])
-                .withSourceOrigins([
-                    diffResultOriginsBuilder
-                        .withPath(['type'])
-                        .withValue('object'),
-                    diffResultOriginsBuilder
-                        .withPath(['required'])
-                        .withValue(['name'])
-                ])
-                .build();
+            const allObjects: JsonSchema = {type: ['object']};
             expect(diffResult.addedJsonSchema).toEqual(allObjects);
             expect(diffResult.removedJsonSchema).toEqual(false);
         });
@@ -534,26 +389,13 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
-            const allObjectsWithAtLeastOneProperty = diffJsonSchemaBuilder
-                .withSchema({
-                    additionalProperties:
-                        diffJsonSchemaBuilder
-                            .withSchema({type: ['string']})
-                            .withDestinationOrigins([diffResultOriginsBuilder
-                                .withPath(['additionalProperties'])
-                                .withValue(false)])
-                            .withSourceOrigins([
-                                diffResultOriginsBuilder
-                                    .withPath(['additionalProperties'])
-                                    .withValue({type: 'string'})
-                            ])
-                            .build(),
-                    minProperties: 1,
-                    type: ['object']
-                })
-                .build();
+            const allObjectsWithAtLeastOneStringProperty: JsonSchema = {
+                additionalProperties: {type: ['string']},
+                minProperties: 1,
+                type: ['object']
+            };
             expect(diffResult.addedJsonSchema).toEqual(false);
-            expect(diffResult.removedJsonSchema).toEqual(allObjectsWithAtLeastOneProperty);
+            expect(diffResult.removedJsonSchema).toEqual(allObjectsWithAtLeastOneStringProperty);
         });
 
         it('should find an add and a remove differences when changing properties type', async () => {
@@ -572,40 +414,24 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
-            const propertiesBaseDiffJsonSchema = diffJsonSchemaBuilder
-                .withSourceOrigins([
-                    diffResultOriginsBuilder
-                        .withValue('array')
-                        .withPath(['properties', 'name', 'type'])])
-                .withDestinationOrigins([
-                    diffResultOriginsBuilder
-                        .withValue('string')
-                        .withPath(['properties', 'name', 'type'])]);
-
-            const allObjectsWithPropertyNameOfTypeString = diffJsonSchemaBuilder
-                .withSchema({
-                    additionalProperties: allTypesSchema,
-                    properties: {
-                        name: propertiesBaseDiffJsonSchema.withSchema({type: ['string']}).build()
-                    },
-                    required: ['name'],
-                    type: ['object']
-                })
-                .build();
-
-            const allObjectsWithPropertyNameOfTypeArray = diffJsonSchemaBuilder
-                .withSchema({
-                    additionalProperties: allTypesSchema,
-                    properties: {
-                        name: propertiesBaseDiffJsonSchema.withSchema({type: ['array']}).build()
-                    },
-                    required: ['name'],
-                    type: ['object']
-                })
-                .build();
-
-            expect(diffResult.addedJsonSchema).toEqual(allObjectsWithPropertyNameOfTypeString);
-            expect(diffResult.removedJsonSchema).toEqual(allObjectsWithPropertyNameOfTypeArray);
+            const allObjectsWithRequiredStringName: JsonSchema = {
+                additionalProperties: allTypes,
+                properties: {
+                    name: {type: ['string']}
+                },
+                required: ['name'],
+                type: ['object']
+            };
+            const allObjectsWithRequiredArrayName: JsonSchema = {
+                additionalProperties: allTypes,
+                properties: {
+                    name: {type: ['array']}
+                },
+                required: ['name'],
+                type: ['object']
+            };
+            expect(diffResult.addedJsonSchema).toEqual(allObjectsWithRequiredStringName);
+            expect(diffResult.removedJsonSchema).toEqual(allObjectsWithRequiredArrayName);
         });
 
         it('should find no differences when a property matching additionalProperties is removed', async () => {
@@ -616,13 +442,13 @@ describe('differ', () => {
                 },
                 type: 'object'
             };
-
             const destinationSchema: JsonSchema = {
                 additionalProperties: {type: 'string'},
                 type: 'object'
             };
 
             const diffResult = await invokeDiff(sourceSchema, destinationSchema);
+
             expect(diffResult.addedJsonSchema).toEqual(false);
             expect(diffResult.removedJsonSchema).toEqual(false);
         });
@@ -645,25 +471,16 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
-            const allObjectsWithPropertyNameOfTypeNull = diffJsonSchemaBuilder.withSchema({
-                additionalProperties: allTypesSchema,
+            const allObjectsWithRequiredNullName: JsonSchema = {
+                additionalProperties: allTypes,
                 properties: {
-                    name: diffJsonSchemaBuilder
-                        .withSchema({type: ['null']})
-                        .withSourceOrigins([diffResultOriginsBuilder
-                            .withPath(['additionalProperties'])
-                            .withValue(true)])
-                        .withDestinationOrigins([diffResultOriginsBuilder
-                            .withPath(['properties', 'name', 'type'])
-                            .withValue(['object', 'string', 'array', 'integer', 'number', 'boolean'])])
-                        .build()
+                    name: {type: ['null']}
                 },
                 required: ['name'],
                 type: ['object']
-            })
-            .build();
+            };
             expect(diffResult.addedJsonSchema).toEqual(false);
-            expect(diffResult.removedJsonSchema).toEqual(allObjectsWithPropertyNameOfTypeNull);
+            expect(diffResult.removedJsonSchema).toEqual(allObjectsWithRequiredNullName);
         });
 
         it('should find differences between schemas with properties and non boolean additionalProperties', async () => {
@@ -683,27 +500,17 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
-            const objectsWithPropertyNameTypeStringAndAdditionalPropertiesAsDefined = diffJsonSchemaBuilder
-            .withSchema({
+            const allObjectsWithRequiredNumberNameAndStringOrNumberAdditionalProperties: JsonSchema = {
                 additionalProperties: {type: ['number', 'string']},
                 properties: {
-                    name: diffJsonSchemaBuilder
-                        .withSchema({type: ['number']})
-                        .withDestinationOrigins([diffResultOriginsBuilder
-                            .withPath(['properties', 'name', 'type'])
-                            .withValue('string')])
-                        .withSourceOrigins([diffResultOriginsBuilder
-                            .withPath(['additionalProperties', 'type'])
-                            .withValue(['string', 'number'])])
-                        .build()
+                    name: {type: ['number']}
                 },
                 required: ['name'],
                 type: ['object']
-            })
-            .build();
+            };
             expect(diffResult.addedJsonSchema).toEqual(false);
             expect(diffResult.removedJsonSchema)
-                .toEqual(objectsWithPropertyNameTypeStringAndAdditionalPropertiesAsDefined);
+                .toEqual(allObjectsWithRequiredNumberNameAndStringOrNumberAdditionalProperties);
         });
 
         it('should find differences in schemas with boolean additionalProperties and optional properties', async () => {
@@ -724,57 +531,32 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
-            const allObjectsWithAtLeastOnePropertyButNoName = diffJsonSchemaBuilder
-                .withSchema(
-                    {
-                        additionalProperties:
-                            diffJsonSchemaBuilder.withSchema(allTypesSchema)
-                            .withDestinationOrigins([diffResultOriginsBuilder
-                                .withPath(['additionalProperties'])
-                                .withValue(false)])
-                            .withSourceOrigins([diffResultOriginsBuilder
-                                .withPath(['additionalProperties'])
-                                .withValue(true)])
-                            .build(),
-                        minProperties: 1,
-                        properties: {
-                            name: false
-                        },
-                        type: ['object']
+            const allObjectsWithNoNameAndAtLeastOneProperty: JsonSchema = {
+                additionalProperties: allTypes,
+                minProperties: 1,
+                properties: {
+                    name: false
+                },
+                type: ['object']
+            };
+            const allObjectsWithRequiredStringNameAndAtLeastAnotherProperty: JsonSchema = {
+                additionalProperties: allTypes,
+                minProperties: 2,
+                properties: {
+                    name: {
+                        type: ['string']
                     }
-                ).build();
-            const allObjectsWithPropertyNameOfTypeStringAndAtLeastAnotherProperty = diffJsonSchemaBuilder
-                .withSchema(
-                    {
-                        additionalProperties:
-                            diffJsonSchemaBuilder.withSchema(allTypesSchema)
-                            .withDestinationOrigins([diffResultOriginsBuilder
-                                .withPath(['additionalProperties'])
-                                .withValue(false)])
-                            .withSourceOrigins([diffResultOriginsBuilder
-                                .withPath(['additionalProperties'])
-                                .withValue(true)])
-                            .build(),
-                        minProperties: 2,
-                        properties: {
-                            name: {
-                                type: ['string']
-                            }
-                        },
-                        required: ['name'],
-                        type: ['object']
-                    }
-                ).build();
+                },
+                required: ['name'],
+                type: ['object']
+            };
             expect(diffResult.addedJsonSchema).toEqual(false);
-            expect(diffResult.removedJsonSchema).toEqual(diffJsonSchemaBuilder
-                .withSchema({
-                    anyOf: [
-                        allObjectsWithAtLeastOnePropertyButNoName,
-                        allObjectsWithPropertyNameOfTypeStringAndAtLeastAnotherProperty
-                    ]
-                })
-                .build()
-            );
+            expect(diffResult.removedJsonSchema).toEqual({
+                anyOf: [
+                    allObjectsWithNoNameAndAtLeastOneProperty,
+                    allObjectsWithRequiredStringNameAndAtLeastAnotherProperty
+                ]
+            });
         });
 
         it('should add numbers into the anyOf when the object differences result in an anyOf', async () => {
@@ -793,69 +575,36 @@ describe('differ', () => {
                 type: ['object']
             };
 
-            const allObjectsWithAtLeastOnePropertyButNoName = diffJsonSchemaBuilder
-                .withSchema({
-                    additionalProperties:
-                        diffJsonSchemaBuilder.withSchema(allTypesSchema)
-                            .withDestinationOrigins([diffResultOriginsBuilder
-                                .withPath(['additionalProperties'])
-                                .withValue(false)])
-                            .withSourceOrigins([diffResultOriginsBuilder
-                                .withPath(['additionalProperties'])
-                                .withValue(true)])
-                            .build(),
-                    minProperties: 1,
-                    properties: {
-                        name: false
-                    },
-                    type: ['object']
-                })
-                .withSourceOrigins([diffResultOriginsBuilder.withPath(['type']).withValue(['object', 'number'])])
-                .withDestinationOrigins([diffResultOriginsBuilder.withPath(['type']).withValue(['object'])])
-                .build();
-            const allObjectsWithPropertyNameOfTypeString = diffJsonSchemaBuilder
-                .withSchema({
-                    additionalProperties:
-                        diffJsonSchemaBuilder.withSchema(allTypesSchema)
-                            .withDestinationOrigins([diffResultOriginsBuilder
-                                .withPath(['additionalProperties'])
-                                .withValue(false)])
-                            .withSourceOrigins([diffResultOriginsBuilder
-                                .withPath(['additionalProperties'])
-                                .withValue(true)])
-                            .build(),
-                    minProperties: 2,
-                    properties: {
-                        name: {
-                            type: ['string']
-                        }
-                    },
-                    required: ['name'],
-                    type: ['object']
-                })
-                .withSourceOrigins([diffResultOriginsBuilder.withPath(['type']).withValue(['object', 'number'])])
-                .withDestinationOrigins([diffResultOriginsBuilder.withPath(['type']).withValue(['object'])])
-                .build();
-
-            const allNumbers = diffJsonSchemaBuilder
-                .withSchema({type: ['number']})
-                .withSourceOrigins([diffResultOriginsBuilder.withPath(['type']).withValue(['object', 'number'])])
-                .withDestinationOrigins([diffResultOriginsBuilder.withPath(['type']).withValue(['object'])])
-                .build();
-
             const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
+            const allObjectsWithNoNameAndAtLeastOneProperty: JsonSchema = {
+                additionalProperties: allTypes,
+                minProperties: 1,
+                properties: {
+                    name: false
+                },
+                type: ['object']
+            };
+            const allObjectsWithRequiredStringNameAndAtLeastAnotherProperty: JsonSchema = {
+                additionalProperties: allTypes,
+                minProperties: 2,
+                properties: {
+                    name: {
+                        type: ['string']
+                    }
+                },
+                required: ['name'],
+                type: ['object']
+            };
+            const allNumbers: JsonSchema = {type: ['number']};
             expect(diffResult.addedJsonSchema).toEqual(false);
-            expect(diffResult.removedJsonSchema).toEqual(diffJsonSchemaBuilder
-                .withSchema({
-                    anyOf: [
-                        allObjectsWithAtLeastOnePropertyButNoName,
-                        allObjectsWithPropertyNameOfTypeString,
-                        allNumbers
-                    ]
-                })
-                .build()
-            );
+            expect(diffResult.removedJsonSchema).toEqual({
+                anyOf: [
+                    allObjectsWithNoNameAndAtLeastOneProperty,
+                    allObjectsWithRequiredStringNameAndAtLeastAnotherProperty,
+                    allNumbers
+                ]
+            });
         });
 
         describe('required properties', () => {
@@ -868,30 +617,14 @@ describe('differ', () => {
 
                 const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
-                const expectedAddedJsonSchema = diffJsonSchemaBuilder
-                    .withSchema({
-                        additionalProperties: allTypesSchema,
-                        properties: {
-                            first: false
-                        },
-                        type: ['object']
-                    })
-                    .withDestinationOrigins([
-                        diffResultOriginsBuilder
-                            .withPath(['type'])
-                            .withValue('object')
-                    ])
-                    .withSourceOrigins([
-                        diffResultOriginsBuilder
-                            .withPath(['type'])
-                            .withValue('object'),
-                        diffResultOriginsBuilder
-                            .withPath(['required'])
-                            .withValue(['first'])
-                    ])
-                    .build();
-
-                expect(diffResult.addedJsonSchema).toEqual(expectedAddedJsonSchema);
+                const allObjectsWithNoFirst: JsonSchema = {
+                    additionalProperties: allTypes,
+                    properties: {
+                        first: false
+                    },
+                    type: ['object']
+                };
+                expect(diffResult.addedJsonSchema).toEqual(allObjectsWithNoFirst);
                 expect(diffResult.removedJsonSchema).toEqual(false);
             });
 
@@ -907,31 +640,13 @@ describe('differ', () => {
 
                 const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
-                const allObjectsWithPropertyNameButNoFirst = diffJsonSchemaBuilder
-                    .withSchema({
-                        additionalProperties: allTypesSchema,
-                        properties: { first: false },
-                        required: ['name'],
-                        type: ['object']
-                    })
-                    .withSourceOrigins([
-                        diffResultOriginsBuilder
-                            .withValue('object')
-                            .withPath(['type']),
-                        diffResultOriginsBuilder
-                            .withValue(['name', 'first'])
-                            .withPath(['required'])
-                    ])
-                    .withDestinationOrigins([
-                        diffResultOriginsBuilder
-                            .withValue('object')
-                            .withPath(['type']),
-                        diffResultOriginsBuilder
-                            .withValue(['name'])
-                            .withPath(['required'])
-                    ])
-                    .build();
-                expect(diffResult.addedJsonSchema).toEqual(allObjectsWithPropertyNameButNoFirst);
+                const allObjectsWithRequiredNameAndNoFirst: JsonSchema = {
+                    additionalProperties: allTypes,
+                    properties: { first: false },
+                    required: ['name'],
+                    type: ['object']
+                };
+                expect(diffResult.addedJsonSchema).toEqual(allObjectsWithRequiredNameAndNoFirst);
                 expect(diffResult.removedJsonSchema).toEqual(false);
             });
 
@@ -957,89 +672,25 @@ describe('differ', () => {
 
                 const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
-                const allObjectsWithPropertyNameAndPropertyFirstOfTypeArray = diffJsonSchemaBuilder
-                    .withSchema({
-                        additionalProperties: allTypesSchema,
-                        properties: {
-                            first: diffJsonSchemaBuilder
-                                .withSchema({
-                                    type: ['array']
-                                })
-                                .withDestinationOrigins([
-                                    diffResultOriginsBuilder
-                                        .withValue(['array'])
-                                        .withPath(['properties', 'first', 'type'])
-                                ])
-                                .withSourceOrigins([
-                                    diffResultOriginsBuilder
-                                        .withValue(['string'])
-                                        .withPath(['properties', 'first', 'type'])
-                                ])
-                                .build()
-                        },
-                        required: ['name', 'first'],
-                        type: ['object']
-                    })
-                    .withDestinationOrigins([
-                        diffResultOriginsBuilder
-                            .withValue('object')
-                            .withPath(['type']),
-                        diffResultOriginsBuilder
-                            .withValue(['name', 'first'])
-                            .withPath(['required'])
-                    ])
-                    .withSourceOrigins([
-                        diffResultOriginsBuilder
-                            .withValue('object')
-                            .withPath(['type']),
-                        diffResultOriginsBuilder
-                            .withValue(['name'])
-                            .withPath(['required'])
-                    ])
-                    .build();
+                const allObjectsWithRequiredNameAndRequiredArrayFirst: JsonSchema = {
+                    additionalProperties: allTypes,
+                    properties: {
+                        first: {type: ['array']}
+                    },
+                    required: ['name', 'first'],
+                    type: ['object']
+                };
 
-                const allObjectsWithPropertyNameAndOptionalPropertyFirstOfTypeString = diffJsonSchemaBuilder
-                    .withSchema({
-                        additionalProperties: allTypesSchema,
-                        properties: {
-                            first: diffJsonSchemaBuilder
-                                .withSchema({
-                                    type: ['string']
-                                })
-                                .withDestinationOrigins([
-                                    diffResultOriginsBuilder
-                                        .withValue(['array'])
-                                        .withPath(['properties', 'first', 'type'])
-                                ])
-                                .withSourceOrigins([
-                                    diffResultOriginsBuilder
-                                        .withValue(['string'])
-                                        .withPath(['properties', 'first', 'type'])
-                                ])
-                                .build()
-                        },
-                        required: ['name'],
-                        type: ['object']
-                    })
-                    .withDestinationOrigins([
-                        diffResultOriginsBuilder
-                            .withValue('object')
-                            .withPath(['type']),
-                        diffResultOriginsBuilder
-                            .withValue(['name', 'first'])
-                            .withPath(['required'])
-                    ])
-                    .withSourceOrigins([
-                        diffResultOriginsBuilder
-                            .withValue('object')
-                            .withPath(['type']),
-                        diffResultOriginsBuilder
-                            .withValue(['name'])
-                            .withPath(['required'])
-                    ]).build();
-                expect(diffResult.addedJsonSchema).toEqual(allObjectsWithPropertyNameAndPropertyFirstOfTypeArray);
-                expect(diffResult.removedJsonSchema)
-                    .toEqual(allObjectsWithPropertyNameAndOptionalPropertyFirstOfTypeString);
+                const allObjectsWithRequiredNameAndRequiredStringFirst: JsonSchema = {
+                    additionalProperties: allTypes,
+                    properties: {
+                        first: {type: ['string']}
+                    },
+                    required: ['name'],
+                    type: ['object']
+                };
+                expect(diffResult.addedJsonSchema).toEqual(allObjectsWithRequiredNameAndRequiredArrayFirst);
+                expect(diffResult.removedJsonSchema).toEqual(allObjectsWithRequiredNameAndRequiredStringFirst);
             });
         });
     });
@@ -1070,52 +721,24 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
-            const allObjectsWithPropertyIdOfTypeNumber = diffJsonSchemaBuilder
-                .withSchema({
-                    additionalProperties: allTypesSchema,
-                    properties: {
-                        id: diffJsonSchemaBuilder
-                            .withSchema({type: ['number']})
-                            .withSourceOrigins([
-                                diffResultOriginsBuilder
-                                    .withValue('string')
-                                    .withPath(['properties', 'id', 'type'])
-                            ])
-                            .withDestinationOrigins([
-                                diffResultOriginsBuilder
-                                    .withValue('number')
-                                    .withPath(['properties', 'id', 'type'])
-                            ])
-                            .build()
-                    },
-                    required: ['id'],
-                    type: ['object']
-                })
-                .build();
-            const allObjectsWithPropertyIdOfTypeString = diffJsonSchemaBuilder
-                .withSchema({
-                    additionalProperties: allTypesSchema,
-                    properties: {
-                        id: diffJsonSchemaBuilder
-                            .withSchema({type: ['string']})
-                            .withSourceOrigins([
-                                diffResultOriginsBuilder
-                                    .withValue('string')
-                                    .withPath(['properties', 'id', 'type'])
-                            ])
-                            .withDestinationOrigins([
-                                diffResultOriginsBuilder
-                                    .withValue('number')
-                                    .withPath(['properties', 'id', 'type'])
-                            ])
-                            .build()
-                    },
-                    required: ['id'],
-                    type: ['object']
-                })
-                .build();
-            expect(diffResult.addedJsonSchema).toEqual(allObjectsWithPropertyIdOfTypeNumber);
-            expect(diffResult.removedJsonSchema).toEqual(allObjectsWithPropertyIdOfTypeString);
+            const allObjectsWithRequiredNumberId: JsonSchema = {
+                additionalProperties: allTypes,
+                properties: {
+                    id: {type: ['number']}
+                },
+                required: ['id'],
+                type: ['object']
+            };
+            const allObjectsWithRequiredStringId: JsonSchema = {
+                additionalProperties: allTypes,
+                properties: {
+                    id: {type: ['string']}
+                },
+                required: ['id'],
+                type: ['object']
+            };
+            expect(diffResult.addedJsonSchema).toEqual(allObjectsWithRequiredNumberId);
+            expect(diffResult.removedJsonSchema).toEqual(allObjectsWithRequiredStringId);
         });
 
         it('should follow references in destination schema when detecting differences', async () => {
@@ -1143,52 +766,24 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
-            const allObjectsWithPropertyIdOfTypeNumber = diffJsonSchemaBuilder
-                .withSchema({
-                    additionalProperties: allTypesSchema,
-                    properties: {
-                        id: diffJsonSchemaBuilder
-                            .withSchema({type: ['number']})
-                            .withSourceOrigins([
-                                diffResultOriginsBuilder
-                                    .withValue('string')
-                                    .withPath(['properties', 'id', 'type'])
-                            ])
-                            .withDestinationOrigins([
-                                diffResultOriginsBuilder
-                                    .withValue('number')
-                                    .withPath(['properties', 'id', 'type'])
-                            ])
-                            .build()
-                    },
-                    required: ['id'],
-                    type: ['object']
-                })
-                .build();
-            const allObjectsWithPropertyIdOfTypeString = diffJsonSchemaBuilder
-                .withSchema({
-                    additionalProperties: allTypesSchema,
-                    properties: {
-                        id: diffJsonSchemaBuilder
-                            .withSchema({type: ['string']})
-                            .withSourceOrigins([
-                                diffResultOriginsBuilder
-                                    .withValue('string')
-                                    .withPath(['properties', 'id', 'type'])
-                            ])
-                            .withDestinationOrigins([
-                                diffResultOriginsBuilder
-                                    .withValue('number')
-                                    .withPath(['properties', 'id', 'type'])
-                            ])
-                            .build()
-                    },
-                    required: ['id'],
-                    type: ['object']
-                })
-                .build();
-            expect(diffResult.addedJsonSchema).toEqual(allObjectsWithPropertyIdOfTypeNumber);
-            expect(diffResult.removedJsonSchema).toEqual(allObjectsWithPropertyIdOfTypeString);
+            const allObjectsWithRequiredNumberId: JsonSchema = {
+                additionalProperties: allTypes,
+                properties: {
+                    id: {type: ['number']}
+                },
+                required: ['id'],
+                type: ['object']
+            };
+            const allObjectsWithRequiredStringId: JsonSchema = {
+                additionalProperties: allTypes,
+                properties: {
+                    id: {type: ['string']}
+                },
+                required: ['id'],
+                type: ['object']
+            };
+            expect(diffResult.addedJsonSchema).toEqual(allObjectsWithRequiredNumberId);
+            expect(diffResult.removedJsonSchema).toEqual(allObjectsWithRequiredStringId);
         });
 
         it('should follow nested references', async () => {
@@ -1237,66 +832,38 @@ describe('differ', () => {
 
             const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
-            const allObjectsWithPropertyContentOfTypeString = diffJsonSchemaBuilder
-                .withSchema({
-                    additionalProperties: allTypesSchema,
-                    properties: {
-                        id: {
-                            additionalProperties: allTypesSchema,
-                            properties: {
-                                content: diffJsonSchemaBuilder
-                                    .withSchema({type: ['number']})
-                                    .withSourceOrigins([
-                                        diffResultOriginsBuilder
-                                            .withValue('string')
-                                            .withPath(['properties', 'id', 'properties', 'content', 'type'])
-                                    ])
-                                    .withDestinationOrigins([
-                                        diffResultOriginsBuilder
-                                            .withValue('number')
-                                            .withPath(['properties', 'id', 'properties', 'content', 'type'])
-                                    ])
-                                    .build()
-                            },
-                            required: ['content'],
-                            type: ['object']
-                        }
-                    },
-                    required: ['id'],
-                    type: ['object']
-                })
-                .build();
-            const allObjectsWithPropertyContentOfTypeNumber = diffJsonSchemaBuilder
-                .withSchema({
-                    additionalProperties: allTypesSchema,
-                    properties: {
-                        id: {
-                            additionalProperties: allTypesSchema,
-                            properties: {
-                                content: diffJsonSchemaBuilder
-                                    .withSchema({type: ['string']})
-                                    .withSourceOrigins([
-                                        diffResultOriginsBuilder
-                                            .withValue('string')
-                                            .withPath(['properties', 'id', 'properties', 'content', 'type'])
-                                    ])
-                                    .withDestinationOrigins([
-                                        diffResultOriginsBuilder
-                                            .withValue('number')
-                                            .withPath(['properties', 'id', 'properties', 'content', 'type'])
-                                    ])
-                                    .build()
-                            },
-                            required: ['content'],
-                            type: ['object']
-                        }
-                    },
-                    required: ['id'],
-                    type: ['object']
-                })
-                .build();
-            expect(diffResult.addedJsonSchema).toEqual(allObjectsWithPropertyContentOfTypeString);
-            expect(diffResult.removedJsonSchema).toEqual(allObjectsWithPropertyContentOfTypeNumber);
+            const allObjectsWithRequiredObjectIdContainingRequiredNumberContent: JsonSchema = {
+                additionalProperties: allTypes,
+                properties: {
+                    id: {
+                        additionalProperties: allTypes,
+                        properties: {
+                            content: {type: ['number']}
+                        },
+                        required: ['content'],
+                        type: ['object']
+                    }
+                },
+                required: ['id'],
+                type: ['object']
+            };
+            const allObjectsWithRequiredObjectIdContainingRequiredStringContent: JsonSchema = {
+                additionalProperties: allTypes,
+                properties: {
+                    id: {
+                        additionalProperties: allTypes,
+                        properties: {
+                            content: {type: ['string']}
+                        },
+                        required: ['content'],
+                        type: ['object']
+                    }
+                },
+                required: ['id'],
+                type: ['object']
+            };
+            expect(diffResult.addedJsonSchema).toEqual(allObjectsWithRequiredObjectIdContainingRequiredNumberContent);
+            expect(diffResult.removedJsonSchema).toEqual(allObjectsWithRequiredObjectIdContainingRequiredStringContent);
         });
 
         it('should fail when schema contains circular references', async () => {
