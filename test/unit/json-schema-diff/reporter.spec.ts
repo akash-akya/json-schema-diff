@@ -1,6 +1,6 @@
-import {DiffResult} from '../../lib/api-types';
-import {Reporter} from '../../lib/json-schema-diff/reporter';
-import {WrappedLog} from '../../lib/json-schema-diff/reporter/wrapped-log';
+import {DiffResult} from '../../../lib/api-types';
+import {Reporter} from '../../../lib/json-schema-diff/reporter';
+import {WrappedLog} from '../../../lib/json-schema-diff/reporter/wrapped-log';
 
 describe('reporter', () => {
     let reporter: Reporter;

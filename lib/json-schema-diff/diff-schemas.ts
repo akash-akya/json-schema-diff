@@ -1,20 +1,9 @@
-import RefParser = require('json-schema-ref-parser');
-import {JsonSchema} from 'json-schema-spec-types';
-import {isBoolean} from 'util';
-import {DiffResult} from '../../api-types';
-import {parseAsJsonSet} from './parser/parse-as-json-set';
-import {validateSchemas} from './validate-schemas';
+import {DiffResult} from '../api-types';
+import {dereferenceSchema} from './diff-schemas/dereference-schema';
+import {parseAsJsonSet} from './diff-schemas/parse-as-json-set';
+import {validateSchemas} from './diff-schemas/validate-schemas';
 
-export const dereferenceSchema = async (schema: JsonSchema): Promise<JsonSchema> => {
-    const refParser = new RefParser();
-    return isBoolean(schema)
-        ? schema
-        : await refParser.dereference(schema as object, {dereference: {circular: false}}) as JsonSchema;
-};
-
-export const diffSchemas = async (sourceSchema: JsonSchema,
-                                  destinationSchema: JsonSchema): Promise<DiffResult> => {
-
+export const diffSchemas = async (sourceSchema: any, destinationSchema: any): Promise<DiffResult> => {
     const [dereferencedSourceSchema, dereferencedDestinationSchema] = await Promise.all([
         dereferenceSchema(sourceSchema), dereferenceSchema(destinationSchema)
     ]);

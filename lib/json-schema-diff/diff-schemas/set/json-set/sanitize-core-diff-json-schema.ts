@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import {CoreDiffJsonSchema, DiffJsonSchema} from './diff-json-schema';
+import {CoreDiffJsonSchema, DiffJsonSchema} from '../set';
 
 const removeEmptyPropertiesObject = (jsonSchema: CoreDiffJsonSchema): CoreDiffJsonSchema => {
     return jsonSchema.properties && Object.keys(jsonSchema.properties).length > 0

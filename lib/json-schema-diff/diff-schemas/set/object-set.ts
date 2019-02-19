@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
-import {DiffJsonSchema} from '../diff-json-schema';
-import {Set} from '../set';
-import {ObjectSubset} from './object-subset';
+import {DiffJsonSchema, Set} from './set';
+import {ObjectSubset} from './subset/object-subset';
 
 export class ObjectSet implements Set<'object'> {
     public readonly setType: 'object';

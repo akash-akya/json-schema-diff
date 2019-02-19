@@ -1,6 +1,6 @@
 import {VError} from 'verror';
 import {DiffResult, JsonSchemaDiffOptions} from './api-types';
-import {Differ} from './json-schema-diff/differ';
+import {diffSchemas} from './json-schema-diff/diff-schemas';
 import {FileReader} from './json-schema-diff/file-reader';
 import {Reporter} from './json-schema-diff/reporter';
 
@@ -46,7 +46,7 @@ export class JsonSchemaDiff {
     }
 
     public async diffSchemas(options: JsonSchemaDiffOptions): Promise<DiffResult> {
-        return Differ.diff(options.sourceSchema, options.destinationSchema);
+        return diffSchemas(options.sourceSchema, options.destinationSchema);
     }
 
     private reportDiffResult(diffResult: DiffResult): void {

@@ -1,8 +1,7 @@
 // tslint:disable:max-classes-per-file
 
 import {SimpleTypes} from 'json-schema-spec-types';
-import {DiffJsonSchema} from '../diff-json-schema';
-import {Set} from '../set';
+import {DiffJsonSchema, Set} from './set';
 
 interface TypeSet<T extends SimpleTypes> extends Set<T> {}
 

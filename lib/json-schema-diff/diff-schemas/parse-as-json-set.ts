@@ -1,7 +1,7 @@
 import {CoreSchemaMetaSchema, JsonSchema, JsonSchemaMap, SimpleTypes} from 'json-schema-spec-types';
 import {isBoolean, isUndefined} from 'util';
-import {allSchemaTypes, ParsedPropertiesKeyword, Set} from './json-set/set';
 import {createAllJsonSet, createEmptyJsonSet, createSomeJsonSet} from './set-factories/create-json-set';
+import {allSchemaTypes, ParsedPropertiesKeyword, Set} from './set/set';
 
 const parseSchemaProperties = (schemaProperties: JsonSchemaMap = {}): ParsedPropertiesKeyword => {
     const objectSetProperties: ParsedPropertiesKeyword = {};
@@ -29,21 +29,14 @@ const parseRequiredKeyword = (schema: CoreSchemaMetaSchema): string[] => schema.
 
 const generateDefaultMinPropertiesKeyword = (): number => 0;
 
-const parseCoreSchemaMetaSchema = (schema: CoreSchemaMetaSchema): Set<'json'> => {
-    const type = parseType(schema.type);
-    const additionalProperties = parseSchemaOrUndefinedAsJsonSet(schema.additionalProperties);
-    const properties = parseSchemaProperties(schema.properties);
-    const required = parseRequiredKeyword(schema);
-    const minProperties = generateDefaultMinPropertiesKeyword();
-
-    return createSomeJsonSet({
-        additionalProperties,
-        minProperties,
-        properties,
-        required,
-        type
+const parseCoreSchemaMetaSchema = (schema: CoreSchemaMetaSchema): Set<'json'> =>
+    createSomeJsonSet({
+        additionalProperties: parseSchemaOrUndefinedAsJsonSet(schema.additionalProperties),
+        minProperties: generateDefaultMinPropertiesKeyword(),
+        properties: parseSchemaProperties(schema.properties),
+        required: parseRequiredKeyword(schema),
+        type: parseType(schema.type)
     });
-};
 
 const parseBooleanSchema = (schema: boolean | undefined): Set<'json'> => {
     const allowsAllJsonValues = isUndefined(schema) ? true : schema;

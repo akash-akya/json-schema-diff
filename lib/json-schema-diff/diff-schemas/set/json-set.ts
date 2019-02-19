@@ -1,8 +1,7 @@
 // tslint:disable:max-classes-per-file
 import {SimpleTypes} from 'json-schema-spec-types';
-import {CoreDiffJsonSchema, DiffJsonSchema, isCoreDiffJsonSchema} from './diff-json-schema';
-import {sanitizeCoreDiffJsonSchema} from './sanitize-core-diff-json-schema';
-import {allSchemaTypes, Set} from './set';
+import {sanitizeCoreDiffJsonSchema} from './json-set/sanitize-core-diff-json-schema';
+import {allSchemaTypes, CoreDiffJsonSchema, DiffJsonSchema, isCoreDiffJsonSchema, Set} from './set';
 
 interface JsonSet extends Set<'json'> {
     intersectWithSome(other: SomeJsonSet): JsonSet;

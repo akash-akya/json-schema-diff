@@ -1,9 +1,8 @@
 // tslint:disable:max-classes-per-file
 
 import * as _ from 'lodash';
-import {DiffJsonSchema, SchemaProperties} from '../diff-json-schema';
 import {allJsonSet, emptyJsonSet} from '../json-set';
-import {ParsedPropertiesKeyword, Set} from '../set';
+import {DiffJsonSchema, ParsedPropertiesKeyword, SchemaProperties, Set} from '../set';
 import {hasContradictions} from './object-subset/has-contradictions';
 
 export interface ObjectSubset {
