@@ -12,6 +12,7 @@
     "release-patch": "./node_modules/.bin/gulp release --type patch",
     "test": "./node_modules/.bin/gulp",
     "watch": "./node_modules/.bin/gulp watch",
+    "watch-debug": "JSON_SCHEMA_DIFF_ENABLE_DEBUG=true ./node_modules/.bin/gulp watch",
     "watch-e2e": "./node_modules/.bin/gulp watch-e2e"
   },
   "repository": {

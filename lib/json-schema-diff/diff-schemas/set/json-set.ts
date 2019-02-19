@@ -10,7 +10,8 @@ import {
 } from './set';
 
 interface JsonSet extends Set<'json'> {
-    intersectWithSome(other: SomeJsonSet): JsonSet;
+    intersect(other: JsonSet): Set<'json'>;
+    intersectWithSome(other: SomeJsonSet): Set<'json'>;
 }
 
 export interface TypeSets {
@@ -27,20 +28,20 @@ export class AllJsonSet implements JsonSet {
     public readonly setType = 'json';
     public readonly type = 'all';
 
-    public complement(): JsonSet {
+    public complement(): Set<'json'> {
         return emptyJsonSet;
     }
 
-    public intersect(other: JsonSet): JsonSet {
+    public intersect(other: JsonSet): Set<'json'> {
         return other;
     }
 
-    public intersectWithSome(other: SomeJsonSet): JsonSet {
+    public intersectWithSome(other: SomeJsonSet): Set<'json'> {
         return other;
     }
 
     public toJsonSchema(): RepresentationJsonSchema {
-        return sanitizeCoreRepresentationJsonSchema({type: allSchemaTypes});
+        return {type: allSchemaTypes};
     }
 }
 
@@ -50,15 +51,15 @@ export class EmptyJsonSet implements JsonSet {
     public readonly setType = 'json';
     public readonly type = 'empty';
 
-    public complement(): JsonSet {
+    public complement(): Set<'json'> {
         return allJsonSet;
     }
 
-    public intersect(): JsonSet {
+    public intersect(): Set<'json'> {
         return this;
     }
 
-    public intersectWithSome(): JsonSet {
+    public intersectWithSome(): Set<'json'> {
         return this;
     }
 
@@ -133,7 +134,7 @@ export class SomeJsonSet implements JsonSet {
     public constructor(public readonly typeSets: TypeSets) {
     }
 
-    public complement(): JsonSet {
+    public complement(): Set<'json'> {
         return new SomeJsonSet({
             array: this.typeSets.array.complement(),
             boolean: this.typeSets.boolean.complement(),
@@ -145,11 +146,11 @@ export class SomeJsonSet implements JsonSet {
         });
     }
 
-    public intersect(other: JsonSet): JsonSet {
+    public intersect(other: JsonSet): Set<'json'> {
         return other.intersectWithSome(this);
     }
 
-    public intersectWithSome(other: SomeJsonSet): JsonSet {
+    public intersectWithSome(other: SomeJsonSet): Set<'json'> {
         return new SomeJsonSet({
             array: this.typeSets.array.intersect(other.typeSets.array),
             boolean: this.typeSets.boolean.intersect(other.typeSets.boolean),

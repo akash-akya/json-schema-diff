@@ -10,7 +10,7 @@ export interface ObjectSubset {
 
     toJsonSchema(): RepresentationJsonSchema;
 
-    intersect(otherSet: ObjectSubset): ObjectSubset;
+    intersect(other: ObjectSubset): ObjectSubset;
 
     complement(): ObjectSubset[];
 

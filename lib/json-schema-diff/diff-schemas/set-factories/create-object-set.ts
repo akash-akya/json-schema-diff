@@ -18,6 +18,7 @@ export interface ObjectSetParsedKeywords {
 }
 
 const supportsAllObjects = (objectSetParsedKeywords: ObjectSetParsedKeywords): boolean => {
+    // TODO: This should look at the minProperties keyword, but we need minProperties support to do that
     const everyPropertyIsAll = Object
         .keys(objectSetParsedKeywords.properties)
         .every((propertyName) => objectSetParsedKeywords.properties[propertyName].type === 'all');

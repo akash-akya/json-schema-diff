@@ -47,6 +47,33 @@ describe('diff-schemas type object', () => {
         expect(diffResult.removedJsonSchema).toEqual(allObjectsWithAtLeastOneProperty);
     });
 
+    it('should not infer that all objects are supported when constraints are applied by some properties', async () => {
+        const sourceSchema: JsonSchema = {
+            properties: {
+                first: true,
+                last: false
+            },
+            type: 'object'
+        };
+        const destinationSchema: JsonSchema = {
+            additionalProperties: true,
+            type: 'object'
+        };
+
+        const diffResult = await invokeDiff(sourceSchema, destinationSchema);
+
+        const allObjectsWithRequiredLastProperty: JsonSchema = {
+            additionalProperties: allTypes,
+            properties: {
+                last: allTypes
+            },
+            required: ['last'],
+            type: ['object']
+        };
+        expect(diffResult.addedJsonSchema).toEqual(allObjectsWithRequiredLastProperty);
+        expect(diffResult.removedJsonSchema).toEqual(false);
+    });
+
     it('should infer empty object set when required contradicts properties', async () => {
         const sourceSchema: JsonSchema = {
             additionalProperties: false,

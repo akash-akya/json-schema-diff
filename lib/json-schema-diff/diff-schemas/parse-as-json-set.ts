@@ -29,9 +29,13 @@ const parseRequiredKeyword = (schema: CoreSchemaMetaSchema): string[] => schema.
 
 const generateDefaultMinPropertiesKeyword = (): number => 0;
 
+const generateDefaultMinItemsKeyword = (): number => 0;
+
 const parseCoreSchemaMetaSchema = (schema: CoreSchemaMetaSchema): Set<'json'> =>
     createSomeJsonSet({
         additionalProperties: parseSchemaOrUndefinedAsJsonSet(schema.additionalProperties),
+        items: parseSchemaOrUndefinedAsJsonSet(schema.items),
+        minItems: generateDefaultMinItemsKeyword(),
         minProperties: generateDefaultMinPropertiesKeyword(),
         properties: parseSchemaProperties(schema.properties),
         required: parseRequiredKeyword(schema),

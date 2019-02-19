@@ -11,8 +11,8 @@ export class AllTypeSet<T extends SimpleTypes> implements TypeSet<T> {
     public constructor(public readonly setType: T) {
     }
 
-    public intersect(otherSet: TypeSet<T>): TypeSet<T> {
-        return otherSet;
+    public intersect(other: TypeSet<T>): TypeSet<T> {
+        return other;
     }
 
     public complement(): TypeSet<T> {

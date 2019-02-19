@@ -32,7 +32,7 @@ This is a list of all the keywords in json schema and which keywords Json Schema
 
 | Keyword | Supported |
 |---|---|
-| items | no |
+| items | partial, yes for a single schema, no for an array of schemas |
 | additionalItems | no |
 | maxItems | no |
 | minItems | no |

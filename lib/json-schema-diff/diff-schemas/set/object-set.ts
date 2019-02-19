@@ -30,10 +30,10 @@ export class ObjectSet implements Set<'object'> {
         return new ObjectSet(newObjectSubsets);
     }
 
-    public intersect(otherSet: ObjectSet): Set<'object'> {
+    public intersect(other: ObjectSet): Set<'object'> {
         const newObjectSubsets = [];
         for (const thisObjectSubset of this.objectSubsets) {
-            for (const otherObjectSubset of otherSet.objectSubsets) {
+            for (const otherObjectSubset of other.objectSubsets) {
                 newObjectSubsets.push(thisObjectSubset.intersect(otherObjectSubset));
             }
         }

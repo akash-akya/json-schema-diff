@@ -19,6 +19,12 @@ const removeEmptyMinProperties = (schema: CoreRepresentationJsonSchema): CoreRep
         : schema;
 };
 
+const removeEmptyMinItems = (schema: CoreRepresentationJsonSchema): CoreRepresentationJsonSchema => {
+    return schema.minItems === 0
+        ? _.omit(schema, ['minItems'])
+        : schema;
+};
+
 const sanitizeSchemaArray = (schemaArray: RepresentationJsonSchema[]): CoreRepresentationJsonSchema[] =>
     schemaArray.map((schema: CoreRepresentationJsonSchema) => sanitizeCoreRepresentationJsonSchema(schema));
 
@@ -33,4 +39,5 @@ export const sanitizeCoreRepresentationJsonSchema =
         sanitizeAnyOfSchema(
             removeEmptyPropertiesObject(
                 removeEmptyRequireProperty(
-                    removeEmptyMinProperties(originalSchema))));
+                    removeEmptyMinProperties(
+                        removeEmptyMinItems(originalSchema)))));

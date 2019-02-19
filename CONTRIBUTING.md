@@ -46,6 +46,7 @@ To get fast test feedback run `npm run watch` in one terminal window and `npm ru
 
 - `npm test` - A pre-commit check to be run before pushing any changes.
 - `npm run watch` - Automatically compiles the code and runs the unit tests whenever you edit a relevant file.
+- `npm run watch-debug` - Same as watch but with the tools debug flag enabled.
 - `npm run watch-e2e` - Automatically runs the e2e tests whenever you edit a relevant file. This command does not compile the code and must be run in combination with the watch command.
 
 ## Releasing a new version
