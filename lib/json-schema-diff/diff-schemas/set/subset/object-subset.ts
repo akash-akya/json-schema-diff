@@ -14,10 +14,6 @@ export interface ObjectSubset {
 
     complement(): ObjectSubset[];
 
-    intersectWithAll(other: AllObjectSubset): ObjectSubset;
-
-    intersectWithEmpty(other: EmptyObjectSubset): ObjectSubset;
-
     intersectWithSome(other: SomeObjectSubset): ObjectSubset;
 }
 
@@ -25,19 +21,11 @@ export class AllObjectSubset implements ObjectSubset {
     public readonly type = 'all';
 
     public intersect(other: ObjectSubset): ObjectSubset {
-        return other.intersectWithAll(this);
+        return other;
     }
 
     public intersectWithSome(other: SomeObjectSubset): ObjectSubset {
         return other;
-    }
-
-    public intersectWithAll(): ObjectSubset {
-        return allObjectSubset;
-    }
-
-    public intersectWithEmpty(): ObjectSubset {
-        return emptyObjectSubset;
     }
 
     public complement(): ObjectSubset[] {
@@ -54,20 +42,12 @@ export const allObjectSubset = new AllObjectSubset();
 export class EmptyObjectSubset implements ObjectSubset {
     public readonly type = 'empty';
 
-    public intersect(other: ObjectSubset): ObjectSubset {
-        return other.intersectWithEmpty(this);
-    }
-
-    public intersectWithAll(): ObjectSubset {
-        return emptyObjectSubset;
+    public intersect(): ObjectSubset {
+        return this;
     }
 
     public intersectWithSome(): ObjectSubset {
-        return emptyObjectSubset;
-    }
-
-    public intersectWithEmpty(): ObjectSubset {
-        return emptyObjectSubset;
+        return this;
     }
 
     public complement(): ObjectSubset[] {
@@ -140,14 +120,6 @@ export class SomeObjectSubset implements ObjectSubset {
             properties: SomeObjectSubset.intersectProperties(this, other),
             required: SomeObjectSubset.intersectRequired(this.config.required, other.config.required)
         });
-    }
-
-    public intersectWithAll(): ObjectSubset {
-        return createObjectSubsetFromConfig(this.config);
-    }
-
-    public intersectWithEmpty(): ObjectSubset {
-        return emptyObjectSubset;
     }
 
     public complement(): ObjectSubset[] {
