@@ -1,7 +1,13 @@
 // tslint:disable:max-classes-per-file
 import {SimpleTypes} from 'json-schema-spec-types';
-import {sanitizeCoreDiffJsonSchema} from './json-set/sanitize-core-diff-json-schema';
-import {allSchemaTypes, CoreDiffJsonSchema, DiffJsonSchema, isCoreDiffJsonSchema, Set} from './set';
+import {sanitizeCoreRepresentationJsonSchema} from './json-set/sanitize-core-representation-json-schema';
+import {
+    allSchemaTypes,
+    CoreRepresentationJsonSchema,
+    isCoreRepresentationJsonSchema,
+    RepresentationJsonSchema,
+    Set
+} from './set';
 
 interface JsonSet extends Set<'json'> {
     intersectWithSome(other: SomeJsonSet): JsonSet;
@@ -33,8 +39,8 @@ export class AllJsonSet implements JsonSet {
         return other;
     }
 
-    public toJsonSchema(): DiffJsonSchema {
-        return sanitizeCoreDiffJsonSchema({type: allSchemaTypes});
+    public toJsonSchema(): RepresentationJsonSchema {
+        return sanitizeCoreRepresentationJsonSchema({type: allSchemaTypes});
     }
 }
 
@@ -56,7 +62,7 @@ export class EmptyJsonSet implements JsonSet {
         return this;
     }
 
-    public toJsonSchema(): DiffJsonSchema {
+    public toJsonSchema(): RepresentationJsonSchema {
         return false;
     }
 }
@@ -64,20 +70,20 @@ export class EmptyJsonSet implements JsonSet {
 export const emptyJsonSet = new EmptyJsonSet();
 
 export class SomeJsonSet implements JsonSet {
-    private static isSimpleSchema(schema: CoreDiffJsonSchema): boolean {
+    private static isSimpleSchema(schema: CoreRepresentationJsonSchema): boolean {
         return !schema.anyOf || schema.anyOf.length <= 1;
     }
 
-    private static createEmptyCoreDiffJsonSchema(): CoreDiffJsonSchema {
+    private static createEmptyCoreRepresentationJsonSchema(): CoreRepresentationJsonSchema {
         return {
             type: []
         };
     }
 
-    private static mergeCoreDiffJsonSchemas(
-        schema: CoreDiffJsonSchema,
-        otherSchema: CoreDiffJsonSchema
-    ): CoreDiffJsonSchema {
+    private static mergeCoreRepresentationJsonSchemas(
+        schema: CoreRepresentationJsonSchema,
+        otherSchema: CoreRepresentationJsonSchema
+    ): CoreRepresentationJsonSchema {
         const schemaTypes = SomeJsonSet.getJsonSchemaTypeOrEmpty(schema);
         const otherSchemaTypes = SomeJsonSet.getJsonSchemaTypeOrEmpty(otherSchema);
         const type: SimpleTypes[] = schemaTypes.concat(otherSchemaTypes);
@@ -89,25 +95,25 @@ export class SomeJsonSet implements JsonSet {
         };
     }
 
-    private static toDiffJsonSchema(jsonSchema: CoreDiffJsonSchema): DiffJsonSchema {
+    private static toDiffJsonSchema(jsonSchema: CoreRepresentationJsonSchema): RepresentationJsonSchema {
         const jsonSchemaTypes = SomeJsonSet.getJsonSchemaTypeOrEmpty(jsonSchema);
         const jsonSchemaAnyOf = SomeJsonSet.getJsonSchemaAnyOfOrEmpty(jsonSchema);
         const isEmpty = jsonSchemaTypes.length === 0 && jsonSchemaAnyOf.length === 0;
         return isEmpty ? false : jsonSchema;
     }
 
-    private static getJsonSchemaTypeOrEmpty(jsonSchema: CoreDiffJsonSchema): SimpleTypes[] {
+    private static getJsonSchemaTypeOrEmpty(jsonSchema: CoreRepresentationJsonSchema): SimpleTypes[] {
         return jsonSchema.type || [];
     }
 
-    private static getJsonSchemaAnyOfOrEmpty(jsonSchema: CoreDiffJsonSchema): DiffJsonSchema[] {
+    private static getJsonSchemaAnyOfOrEmpty(jsonSchema: CoreRepresentationJsonSchema): RepresentationJsonSchema[] {
         return jsonSchema.anyOf || [];
     }
 
-    private static toCoreDiffJsonSchema(schema: DiffJsonSchema): CoreDiffJsonSchema {
-        return isCoreDiffJsonSchema(schema)
+    private static toCoreRepresentationJsonSchema(schema: RepresentationJsonSchema): CoreRepresentationJsonSchema {
+        return isCoreRepresentationJsonSchema(schema)
             ? schema
-            : SomeJsonSet.createEmptyCoreDiffJsonSchema();
+            : SomeJsonSet.createEmptyCoreRepresentationJsonSchema();
     }
 
     public readonly setType = 'json';
@@ -155,27 +161,27 @@ export class SomeJsonSet implements JsonSet {
         });
     }
 
-    public toJsonSchema(): DiffJsonSchema {
+    public toJsonSchema(): RepresentationJsonSchema {
         const typeSetSchemas = Object
             .keys(this.typeSets)
-            .map((typeSetName: keyof TypeSets) => this.getSubsetSchemaAsCoreDiffJsonSchema(typeSetName));
+            .map((typeSetName: keyof TypeSets) => this.getSubsetAsCoreRepresentationJsonSchema(typeSetName));
 
         const mergedSimpleSubsetSchemas = typeSetSchemas
             .filter(SomeJsonSet.isSimpleSchema)
-            .map((schema): CoreDiffJsonSchema => {
+            .map((schema): CoreRepresentationJsonSchema => {
                 if (schema.anyOf) {
-                    return SomeJsonSet.toCoreDiffJsonSchema(schema.anyOf[0]);
+                    return SomeJsonSet.toCoreRepresentationJsonSchema(schema.anyOf[0]);
                 }
 
                 return schema;
             })
             .reduce((mergedSchema, schema) => {
-                return SomeJsonSet.mergeCoreDiffJsonSchemas(mergedSchema, schema);
-            }, SomeJsonSet.createEmptyCoreDiffJsonSchema());
+                return SomeJsonSet.mergeCoreRepresentationJsonSchemas(mergedSchema, schema);
+            }, SomeJsonSet.createEmptyCoreRepresentationJsonSchema());
 
         const mergedComplexSubsetSchemas = typeSetSchemas
             .filter((schema) => !SomeJsonSet.isSimpleSchema(schema))
-            .reduce<CoreDiffJsonSchema>((mergedSchema, schema) => {
+            .reduce<CoreRepresentationJsonSchema>((mergedSchema, schema) => {
                 const mergedSchemaAnyOf = SomeJsonSet.getJsonSchemaAnyOfOrEmpty(mergedSchema);
                 const schemaAnyOf = SomeJsonSet.getJsonSchemaAnyOfOrEmpty(schema);
                 return {
@@ -183,7 +189,7 @@ export class SomeJsonSet implements JsonSet {
                 };
             }, {});
 
-        let result: CoreDiffJsonSchema;
+        let result: CoreRepresentationJsonSchema;
 
         if (SomeJsonSet.getJsonSchemaAnyOfOrEmpty(mergedComplexSubsetSchemas).length === 0) {
             result = mergedSimpleSubsetSchemas;
@@ -195,13 +201,13 @@ export class SomeJsonSet implements JsonSet {
             result = mergedComplexSubsetSchemas;
         }
 
-        const sanitisedResult = sanitizeCoreDiffJsonSchema(result);
+        const sanitisedResult = sanitizeCoreRepresentationJsonSchema(result);
         return SomeJsonSet.toDiffJsonSchema(sanitisedResult);
     }
 
-    private getSubsetSchemaAsCoreDiffJsonSchema(typeSetName: keyof TypeSets): CoreDiffJsonSchema {
+    private getSubsetAsCoreRepresentationJsonSchema(typeSetName: keyof TypeSets): CoreRepresentationJsonSchema {
         const typeSetSchema = this.typeSets[typeSetName].toJsonSchema();
-        return SomeJsonSet.toCoreDiffJsonSchema(typeSetSchema);
+        return SomeJsonSet.toCoreRepresentationJsonSchema(typeSetSchema);
     }
 
     private areAllTypeSetsOfType(setType: 'all' | 'empty') {

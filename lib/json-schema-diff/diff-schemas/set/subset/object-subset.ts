@@ -2,13 +2,13 @@
 
 import * as _ from 'lodash';
 import {allJsonSet, emptyJsonSet} from '../json-set';
-import {DiffJsonSchema, ParsedPropertiesKeyword, SchemaProperties, Set} from '../set';
+import {ParsedPropertiesKeyword, RepresentationJsonSchema, SchemaProperties, Set} from '../set';
 import {hasContradictions} from './object-subset/has-contradictions';
 
 export interface ObjectSubset {
     type: 'all' | 'empty' | 'some';
 
-    toJsonSchema(): DiffJsonSchema;
+    toJsonSchema(): RepresentationJsonSchema;
 
     intersect(otherSet: ObjectSubset): ObjectSubset;
 
@@ -32,7 +32,7 @@ export class AllObjectSubset implements ObjectSubset {
         return [emptyObjectSubset];
     }
 
-    public toJsonSchema(): DiffJsonSchema {
+    public toJsonSchema(): RepresentationJsonSchema {
         return {type: ['object']};
     }
 }
@@ -54,7 +54,7 @@ export class EmptyObjectSubset implements ObjectSubset {
         return [allObjectSubset];
     }
 
-    public toJsonSchema(): DiffJsonSchema {
+    public toJsonSchema(): RepresentationJsonSchema {
         return false;
     }
 }
@@ -129,7 +129,7 @@ export class SomeObjectSubset implements ObjectSubset {
         return [...complementedAdditionalProperties, ...complementedProperties, ...complementedRequiredProperties];
     }
 
-    public toJsonSchema(): DiffJsonSchema {
+    public toJsonSchema(): RepresentationJsonSchema {
         const properties = this.toJsonSchemaMap();
         const additionalProperties = this.config.additionalProperties.toJsonSchema();
         return {

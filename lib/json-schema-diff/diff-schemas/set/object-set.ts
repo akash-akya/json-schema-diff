@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import {DiffJsonSchema, Set} from './set';
+import {RepresentationJsonSchema, Set} from './set';
 import {ObjectSubset} from './subset/object-subset';
 
 export class ObjectSet implements Set<'object'> {
@@ -40,7 +40,7 @@ export class ObjectSet implements Set<'object'> {
         return new ObjectSet(newObjectSubsets);
     }
 
-    public toJsonSchema(): DiffJsonSchema {
+    public toJsonSchema(): RepresentationJsonSchema {
         const schemas = this.objectSubsets
             .filter((objectSubset) => objectSubset.type !== 'empty')
             .map((objectSubset) => objectSubset.toJsonSchema());

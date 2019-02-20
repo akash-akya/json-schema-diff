@@ -1,7 +1,7 @@
 // tslint:disable:max-classes-per-file
 
 import {SimpleTypes} from 'json-schema-spec-types';
-import {DiffJsonSchema, Set} from './set';
+import {RepresentationJsonSchema, Set} from './set';
 
 interface TypeSet<T extends SimpleTypes> extends Set<T> {}
 
@@ -19,7 +19,7 @@ export class AllTypeSet<T extends SimpleTypes> implements TypeSet<T> {
         return new EmptyTypeSet(this.setType);
     }
 
-    public toJsonSchema(): DiffJsonSchema {
+    public toJsonSchema(): RepresentationJsonSchema {
         return {type: [this.setType]};
     }
 }
@@ -38,7 +38,7 @@ export class EmptyTypeSet<T extends SimpleTypes> implements TypeSet<T> {
         return new AllTypeSet(this.setType);
     }
 
-    public toJsonSchema(): DiffJsonSchema {
+    public toJsonSchema(): RepresentationJsonSchema {
         return false;
     }
 }

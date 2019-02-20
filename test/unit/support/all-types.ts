@@ -1,5 +1,5 @@
-import {CoreDiffJsonSchema} from '../../../lib/json-schema-diff/diff-schemas/set/set';
+import {CoreRepresentationJsonSchema} from '../../../lib/json-schema-diff/diff-schemas/set/set';
 
-export const allTypes: CoreDiffJsonSchema = {
+export const allTypes: CoreRepresentationJsonSchema = {
     type: ['array', 'boolean', 'integer', 'null', 'number', 'object', 'string']
 };

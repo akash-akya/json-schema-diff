@@ -5,27 +5,27 @@ export interface ParsedPropertiesKeyword {
 }
 
 export interface SchemaProperties {
-    [name: string]: DiffJsonSchema;
+    [name: string]: RepresentationJsonSchema;
 }
 
-export interface CoreDiffJsonSchema extends CoreSchemaMetaSchema {
-    additionalProperties?: DiffJsonSchema;
+export interface CoreRepresentationJsonSchema extends CoreSchemaMetaSchema {
+    additionalProperties?: RepresentationJsonSchema;
     properties?: SchemaProperties;
     type?: SimpleTypes[];
-    anyOf?: DiffJsonSchema[];
+    anyOf?: RepresentationJsonSchema[];
 }
 
-export type DiffJsonSchema = false | CoreDiffJsonSchema;
+export type RepresentationJsonSchema = false | CoreRepresentationJsonSchema;
 
 export interface Set<T> {
     setType: T;
     type: 'all' | 'empty' | 'some';
-    toJsonSchema(): DiffJsonSchema;
-    intersect(otherSet: Set<T>): Set<T>;
+    toJsonSchema(): RepresentationJsonSchema;
+    intersect(other: Set<T>): Set<T>;
     complement(): Set<T>;
 }
 
 export const allSchemaTypes: SimpleTypes[] = ['array', 'boolean', 'integer', 'null', 'number', 'object', 'string'];
 
-export const isCoreDiffJsonSchema =
-    (diffJsonSchema: DiffJsonSchema): diffJsonSchema is CoreDiffJsonSchema => !!diffJsonSchema;
+export const isCoreRepresentationJsonSchema =
+    (schema: RepresentationJsonSchema): schema is CoreRepresentationJsonSchema => !!schema;
