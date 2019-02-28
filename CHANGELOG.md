@@ -1,3 +1,13 @@
+<a name="0.10.0"></a>
+# [0.10.0](https://bitbucket.org/atlassian/json-schema-diff/compare/0.9.0...0.10.0) (2019-02-28)
+
+
+### Features
+
+* add support for the array items keyword ([6cc5f9e](https://bitbucket.org/atlassian/json-schema-diff/commits/6cc5f9e))
+
+
+
 <a name="0.9.0"></a>
 # [0.9.0](https://bitbucket.org/atlassian/json-schema-diff/compare/0.8.3...0.9.0) (2019-02-07)
 

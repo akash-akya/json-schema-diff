@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const verror_1 = require("verror");
-const differ_1 = require("./json-schema-diff/differ");
+const diff_schemas_1 = require("./json-schema-diff/diff-schemas");
 class JsonSchemaDiff {
     constructor(fileReader, reporter) {
         this.fileReader = fileReader;
@@ -47,7 +47,7 @@ class JsonSchemaDiff {
     }
     diffSchemas(options) {
         return __awaiter(this, void 0, void 0, function* () {
-            return differ_1.Differ.diff(options.sourceSchema, options.destinationSchema);
+            return diff_schemas_1.diffSchemas(options.sourceSchema, options.destinationSchema);
         });
     }
     reportDiffResult(diffResult) {

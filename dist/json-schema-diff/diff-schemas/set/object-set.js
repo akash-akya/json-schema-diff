@@ -5,12 +5,6 @@ class ObjectSet {
     constructor(objectSubsets) {
         this.objectSubsets = objectSubsets;
     }
-    toAll() {
-        throw new Error('not implemented');
-    }
-    toEmpty() {
-        throw new Error('not implemented');
-    }
     get type() {
         if (this.hasAtLeastOneObjectSubsetOfType('all')) {
             return 'all';
@@ -20,10 +14,6 @@ class ObjectSet {
         }
         return 'empty';
     }
-    get schemaOrigins() {
-        // TODO: Delete schema origins
-        return this.objectSubsets[0].schemaOrigins;
-    }
     complement() {
         const newObjectSubsets = [];
         for (const objectSubset of this.objectSubsets) {
@@ -31,10 +21,10 @@ class ObjectSet {
         }
         return new ObjectSet(newObjectSubsets);
     }
-    intersect(otherSet) {
+    intersect(other) {
         const newObjectSubsets = [];
         for (const thisObjectSubset of this.objectSubsets) {
-            for (const otherObjectSubset of otherSet.objectSubsets) {
+            for (const otherObjectSubset of other.objectSubsets) {
                 newObjectSubsets.push(thisObjectSubset.intersect(otherObjectSubset));
             }
         }

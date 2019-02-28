@@ -8,12 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const diff_schemas_1 = require("./differ/diff-schemas");
-class Differ {
-    static diff(sourceSchema, destinationSchema) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return diff_schemas_1.diffSchemas(sourceSchema, destinationSchema);
-        });
-    }
-}
-exports.Differ = Differ;
+const RefParser = require("json-schema-ref-parser");
+const util_1 = require("util");
+exports.dereferenceSchema = (schema) => __awaiter(this, void 0, void 0, function* () {
+    const refParser = new RefParser();
+    return util_1.isBoolean(schema)
+        ? schema
+        : yield refParser.dereference(schema, { dereference: { circular: false } });
+});
