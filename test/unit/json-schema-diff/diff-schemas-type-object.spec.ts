@@ -1,5 +1,4 @@
 import {JsonSchema, SimpleTypes} from 'json-schema-spec-types';
-import {allTypes} from '../support/all-types';
 import {invokeDiff} from '../support/invoke-diff';
 
 describe('diff-schemas type object', () => {
@@ -16,7 +15,6 @@ describe('diff-schemas type object', () => {
         const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
         const allObjectsWithAtLeastOneProperty: JsonSchema = {
-            additionalProperties: allTypes,
             minProperties: 1,
             type: ['object']
         };
@@ -39,7 +37,6 @@ describe('diff-schemas type object', () => {
         const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
         const allObjectsWithAtLeastOneProperty: JsonSchema = {
-            additionalProperties: allTypes,
             minProperties: 1,
             type: ['object']
         };
@@ -63,9 +60,8 @@ describe('diff-schemas type object', () => {
         const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
         const allObjectsWithRequiredLastProperty: JsonSchema = {
-            additionalProperties: allTypes,
             properties: {
-                last: allTypes
+                last: true
             },
             required: ['last'],
             type: ['object']
@@ -112,7 +108,6 @@ describe('diff-schemas type object', () => {
         const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
         const allObjectsWithRequiredStringName: JsonSchema = {
-            additionalProperties: allTypes,
             properties: {
                 name: {type: ['string']}
             },
@@ -120,7 +115,6 @@ describe('diff-schemas type object', () => {
             type: ['object']
         };
         const allObjectsWithRequiredArrayName: JsonSchema = {
-            additionalProperties: allTypes,
             properties: {
                 name: {type: ['array']}
             },
@@ -169,7 +163,6 @@ describe('diff-schemas type object', () => {
         const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
         const allObjectsWithRequiredNullName: JsonSchema = {
-            additionalProperties: allTypes,
             properties: {
                 name: {type: ['null']}
             },
@@ -229,7 +222,6 @@ describe('diff-schemas type object', () => {
         const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
         const allObjectsWithNoNameAndAtLeastOneProperty: JsonSchema = {
-            additionalProperties: allTypes,
             minProperties: 1,
             properties: {
                 name: false
@@ -237,7 +229,6 @@ describe('diff-schemas type object', () => {
             type: ['object']
         };
         const allObjectsWithRequiredStringNameAndAtLeastAnotherProperty: JsonSchema = {
-            additionalProperties: allTypes,
             minProperties: 2,
             properties: {
                 name: {
@@ -275,7 +266,6 @@ describe('diff-schemas type object', () => {
         const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
         const allObjectsWithNoNameAndAtLeastOneProperty: JsonSchema = {
-            additionalProperties: allTypes,
             minProperties: 1,
             properties: {
                 name: false
@@ -283,7 +273,6 @@ describe('diff-schemas type object', () => {
             type: ['object']
         };
         const allObjectsWithRequiredStringNameAndAtLeastAnotherProperty: JsonSchema = {
-            additionalProperties: allTypes,
             minProperties: 2,
             properties: {
                 name: {
@@ -315,7 +304,6 @@ describe('diff-schemas type object', () => {
             const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
             const allObjectsWithNoFirst: JsonSchema = {
-                additionalProperties: allTypes,
                 properties: {
                     first: false
                 },
@@ -338,7 +326,6 @@ describe('diff-schemas type object', () => {
             const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
             const allObjectsWithRequiredNameAndNoFirst: JsonSchema = {
-                additionalProperties: allTypes,
                 properties: { first: false },
                 required: ['name'],
                 type: ['object']
@@ -370,7 +357,6 @@ describe('diff-schemas type object', () => {
             const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
             const allObjectsWithRequiredNameAndRequiredArrayFirst: JsonSchema = {
-                additionalProperties: allTypes,
                 properties: {
                     first: {type: ['array']}
                 },
@@ -379,7 +365,6 @@ describe('diff-schemas type object', () => {
             };
 
             const allObjectsWithRequiredNameAndRequiredStringFirst: JsonSchema = {
-                additionalProperties: allTypes,
                 properties: {
                     first: {type: ['string']}
                 },

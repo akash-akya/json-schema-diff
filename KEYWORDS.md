@@ -9,6 +9,7 @@ This is a list of all the keywords in json schema and which keywords Json Schema
 | type | yes |
 | enum | no |
 | const | no |
+| default | no |
 
 ## Validation Keywords for Numeric Instances (number and integer)
 
@@ -24,6 +25,7 @@ This is a list of all the keywords in json schema and which keywords Json Schema
 
 | Keyword | Supported |
 |---|---|
+| format | no |
 | maxLength | no |
 | minLength | no |
 | pattern | no |
@@ -35,7 +37,7 @@ This is a list of all the keywords in json schema and which keywords Json Schema
 | items | partial, yes for a single schema, no for an array of schemas |
 | additionalItems | no |
 | maxItems | no |
-| minItems | no |
+| minItems | yes |
 | uniqueItems | no |
 | contains | no |
 
@@ -71,3 +73,9 @@ This is a list of all the keywords in json schema and which keywords Json Schema
 | anyOf | no |
 | oneOf | no |
 | not | no |
+
+## Miscellaneous Keywords
+
+| Keyword | Supported |
+|---|---|
+| $ref | partial, yes for internal non-circular references, no for external references, no for circular references |

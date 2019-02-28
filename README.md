@@ -12,16 +12,67 @@ Install the tool using npm and add it to the package.json
 npm install json-schema-diff --save-dev
 ```
 
-## Usage
+## Description
 
-This tool identifies differences between two json schema files.
+This tool identifies what has changed between two json schema files.
+These changes are classified into two groups, added and removed. Using an approach based on set theory this tool is able to calculate these differences to a high level of accuracy.
+
 [KEYWORDS.md](KEYWORDS.md) contains the details of what json schema keywords are supported.
-Differences are classified into two broad groups, added and removed.
 
-Added differences are areas where the destination schema has become more permissive relative to the source schema. For example `{"type": "string"}` -> `{"type": ["string", "number"]}`.
+A change is considered an addition when the destination schema has become more permissive relative to the source schema. For example `{"type": "string"}` -> `{"type": ["string", "number"]}`.
 
 
-Removed differences are areas where the destination schema has become more restrictive relative to the source schema. For example `{"type": ["string", "number"]}` -> `{"type": "string"}`.
+A change is considered a removal when the destination schema has become more restrictive relative to the source schema. For example `{"type": ["string", "number"]}` -> `{"type": "string"}`.
+
+The addition and removal changes detected are returned in JsonSchema format. These schemas represent the set of values that have been added or removed.
+
+### Example
+
+#### Source Schema
+```
+{
+    "properties": {
+        "id": {
+            "type": "number"
+        }
+    },
+    "type": "object"
+}
+```
+
+#### Destination Schema
+```
+{
+    "properties": {
+        "id": {
+            "type": ["string", "number"]
+        }
+    },
+    "type": "object"
+}
+```
+
+#### Schema representing what was added
+All objects that contain an id property of type string. The id property is required because both source and destination schemas accept objects without an id property, so we want to exclude those objects from the added result.
+```
+{
+    "properties": {
+        "id": {
+            "type": "string"
+        }
+    },
+    "required": ["id"],
+    "type": "object"
+}
+```
+
+#### Schema representing what was removed
+All values accepted by the source schema are also accepted by the destination schema, so the removed result is a schema that accepts no values.
+```
+false
+```
+
+## Usage
 
 ### Usage as a cli tool
 
@@ -73,7 +124,7 @@ These objects should be simple javascript objects and be valid according to the 
 
 For full details of the nodejs api please refer to [api-types.d.ts](lib/api-types.d.ts)
 
-### Example
+#### Example
 
 ```
 const jsonSchemaDiff = require('json-schema-diff');

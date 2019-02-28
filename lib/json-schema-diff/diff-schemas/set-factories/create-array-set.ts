@@ -1,29 +1,32 @@
 import {SimpleTypes} from 'json-schema-spec-types';
-import {allArraySet, emptyArraySet, SomeArraySet} from '../set/array-set';
-import {Set} from '../set/set';
+import {Set, Subset} from '../set/set';
+import {SetOfSubsets} from '../set/set-of-subsets';
+import {allArraySubset, createArraySubsetFromConfig, emptyArraySubset} from '../set/subset/array-subset';
 import {isTypeSupported} from './is-type-supported';
 
 export interface ArraySetParsedKeywords {
     items: Set<'json'>;
+    maxItems: number;
     minItems: number;
     type: SimpleTypes[];
 }
 
-const supportsAllArrays = (arraySetParsedKeywords: ArraySetParsedKeywords): boolean => {
-    // TODO: This should look at the minItems keyword, but we need minItems support to do that
-    return arraySetParsedKeywords.items.type === 'all';
-};
+const supportsAllArrays = (arraySetParsedKeywords: ArraySetParsedKeywords): boolean =>
+    arraySetParsedKeywords.items.type === 'all' && arraySetParsedKeywords.minItems === 0;
 
-export const createArraySet = (arraySetParsedKeywords: ArraySetParsedKeywords): Set<'array'> => {
+const createArraySubset = (arraySetParsedKeywords: ArraySetParsedKeywords): Subset<'array'> => {
     if (!isTypeSupported(arraySetParsedKeywords.type, 'array')) {
-        return emptyArraySet;
+        return emptyArraySubset;
     }
 
     if (supportsAllArrays(arraySetParsedKeywords)) {
-        return allArraySet;
+        return allArraySubset;
     }
 
-    // TODO: Make this invoke createArraySetFromConfig, but can't be asserted, needs support:
-    //  {minItems: 1, type: 'array', items: false} -> false
-    return new SomeArraySet(arraySetParsedKeywords);
+    return createArraySubsetFromConfig(arraySetParsedKeywords);
+};
+
+export const createArraySet = (arraySetParsedKeywords: ArraySetParsedKeywords): Set<'array'> => {
+    const arraySubset = createArraySubset(arraySetParsedKeywords);
+    return new SetOfSubsets('array', [arraySubset]);
 };

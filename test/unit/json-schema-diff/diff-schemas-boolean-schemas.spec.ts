@@ -1,5 +1,4 @@
 import {JsonSchema, SimpleTypes} from 'json-schema-spec-types';
-import {allTypes} from '../support/all-types';
 import {invokeDiff} from '../support/invoke-diff';
 
 describe('diff-schemas boolean schemas', () => {
@@ -19,7 +18,7 @@ describe('diff-schemas boolean schemas', () => {
 
         const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
-        expect(diffResult.addedJsonSchema).toEqual(allTypes);
+        expect(diffResult.addedJsonSchema).toEqual(true);
         expect(diffResult.removedJsonSchema).toEqual(false);
     });
 

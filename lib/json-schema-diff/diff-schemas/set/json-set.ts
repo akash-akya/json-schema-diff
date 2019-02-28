@@ -1,8 +1,7 @@
 // tslint:disable:max-classes-per-file
 import {SimpleTypes} from 'json-schema-spec-types';
-import {sanitizeCoreRepresentationJsonSchema} from './json-set/sanitize-core-representation-json-schema';
+import {omitDefaults} from './json-set/omit-defaults';
 import {
-    allSchemaTypes,
     CoreRepresentationJsonSchema,
     isCoreRepresentationJsonSchema,
     RepresentationJsonSchema,
@@ -41,7 +40,7 @@ export class AllJsonSet implements JsonSet {
     }
 
     public toJsonSchema(): RepresentationJsonSchema {
-        return {type: allSchemaTypes};
+        return true;
     }
 }
 
@@ -202,7 +201,7 @@ export class SomeJsonSet implements JsonSet {
             result = mergedComplexSubsetSchemas;
         }
 
-        const sanitisedResult = sanitizeCoreRepresentationJsonSchema(result);
+        const sanitisedResult = omitDefaults(result);
         return SomeJsonSet.toDiffJsonSchema(sanitisedResult);
     }
 

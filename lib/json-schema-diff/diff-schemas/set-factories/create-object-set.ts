@@ -1,12 +1,7 @@
 import {SimpleTypes} from 'json-schema-spec-types';
-import {ObjectSet} from '../set/object-set';
-import {ParsedPropertiesKeyword, Set} from '../set/set';
-import {
-    allObjectSubset,
-    createObjectSubsetFromConfig,
-    emptyObjectSubset,
-    ObjectSubset
-} from '../set/subset/object-subset';
+import {ParsedPropertiesKeyword, Set, Subset} from '../set/set';
+import {SetOfSubsets} from '../set/set-of-subsets';
+import {allObjectSubset, createObjectSubsetFromConfig, emptyObjectSubset} from '../set/subset/object-subset';
 import {isTypeSupported} from './is-type-supported';
 
 export interface ObjectSetParsedKeywords {
@@ -28,7 +23,7 @@ const supportsAllObjects = (objectSetParsedKeywords: ObjectSetParsedKeywords): b
         && objectSetParsedKeywords.additionalProperties.type === 'all';
 };
 
-const createObjectSubset = (objectSetParsedKeywords: ObjectSetParsedKeywords): ObjectSubset => {
+const createObjectSubset = (objectSetParsedKeywords: ObjectSetParsedKeywords): Subset<'object'> => {
     if (!isTypeSupported(objectSetParsedKeywords.type, 'object')) {
         return emptyObjectSubset;
     }
@@ -47,5 +42,5 @@ const createObjectSubset = (objectSetParsedKeywords: ObjectSetParsedKeywords): O
 
 export const createObjectSet = (objectSetParsedKeywords: ObjectSetParsedKeywords): Set<'object'> => {
     const objectSubset = createObjectSubset(objectSetParsedKeywords);
-    return new ObjectSet([objectSubset]);
+    return new SetOfSubsets('object', [objectSubset]);
 };

@@ -1,5 +1,4 @@
 import {JsonSchema} from 'json-schema-spec-types';
-import {allTypes} from '../support/all-types';
 import {invokeDiff, invokeDiffAndExpectToFail} from '../support/invoke-diff';
 
 describe('diff-schemas references', () => {
@@ -29,7 +28,6 @@ describe('diff-schemas references', () => {
         const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
         const allObjectsWithPropertyIdOfTypeNumber: JsonSchema = {
-            additionalProperties: allTypes,
             properties: {
                 id: {type: ['number']}
             },
@@ -37,7 +35,6 @@ describe('diff-schemas references', () => {
             type: ['object']
         };
         const allObjectsWithPropertyIdOfTypeString: JsonSchema = {
-            additionalProperties: allTypes,
             properties: {
                 id: {type: ['string']}
             },
@@ -74,7 +71,6 @@ describe('diff-schemas references', () => {
         const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
         const allObjectsWithPropertyIdOfTypeNumber: JsonSchema = {
-            additionalProperties: allTypes,
             properties: {
                 id: {type: ['number']}
             },
@@ -82,7 +78,6 @@ describe('diff-schemas references', () => {
             type: ['object']
         };
         const allObjectsWithPropertyIdOfTypeString: JsonSchema = {
-            additionalProperties: allTypes,
             properties: {
                 id: {type: ['string']}
             },
@@ -140,10 +135,8 @@ describe('diff-schemas references', () => {
         const diffResult = await invokeDiff(sourceSchema, destinationSchema);
 
         const allObjectsWithPropertyContentOfTypeString: JsonSchema = {
-            additionalProperties: allTypes,
             properties: {
                 id: {
-                    additionalProperties: allTypes,
                     properties: {
                         content: {type: ['number']}
                     },
@@ -155,10 +148,8 @@ describe('diff-schemas references', () => {
             type: ['object']
         };
         const allObjectsWithPropertyContentOfTypeNumber: JsonSchema = {
-            additionalProperties: allTypes,
             properties: {
                 id: {
-                    additionalProperties: allTypes,
                     properties: {
                         content: {type: ['string']}
                     },

@@ -25,6 +25,6 @@ const isRequiredPropertyContradiction = (config: SomeObjectSubsetConfig): boolea
     });
 };
 
-export const hasContradictions = (config: SomeObjectSubsetConfig): boolean => {
+export const objectHasContradictions = (config: SomeObjectSubsetConfig): boolean => {
     return isRequiredPropertyContradiction(config) || isMinPropertiesAndAdditionalPropertiesContradiction(config);
 };

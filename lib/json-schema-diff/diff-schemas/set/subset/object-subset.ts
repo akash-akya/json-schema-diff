@@ -1,65 +1,10 @@
 // tslint:disable:max-classes-per-file
 
-import * as _ from 'lodash';
 import {allJsonSet, emptyJsonSet} from '../json-set';
-import {ParsedPropertiesKeyword, RepresentationJsonSchema, SchemaProperties, Set} from '../set';
-import {hasContradictions} from './object-subset/has-contradictions';
-
-export interface ObjectSubset {
-    type: 'all' | 'empty' | 'some';
-
-    toJsonSchema(): RepresentationJsonSchema;
-
-    intersect(other: ObjectSubset): ObjectSubset;
-
-    complement(): ObjectSubset[];
-
-    intersectWithSome(other: SomeObjectSubset): ObjectSubset;
-}
-
-export class AllObjectSubset implements ObjectSubset {
-    public readonly type = 'all';
-
-    public intersect(other: ObjectSubset): ObjectSubset {
-        return other;
-    }
-
-    public intersectWithSome(other: SomeObjectSubset): ObjectSubset {
-        return other;
-    }
-
-    public complement(): ObjectSubset[] {
-        return [emptyObjectSubset];
-    }
-
-    public toJsonSchema(): RepresentationJsonSchema {
-        return {type: ['object']};
-    }
-}
-
-export const allObjectSubset = new AllObjectSubset();
-
-export class EmptyObjectSubset implements ObjectSubset {
-    public readonly type = 'empty';
-
-    public intersect(): ObjectSubset {
-        return this;
-    }
-
-    public intersectWithSome(): ObjectSubset {
-        return this;
-    }
-
-    public complement(): ObjectSubset[] {
-        return [allObjectSubset];
-    }
-
-    public toJsonSchema(): RepresentationJsonSchema {
-        return false;
-    }
-}
-
-export const emptyObjectSubset = new EmptyObjectSubset();
+import {ParsedPropertiesKeyword, RepresentationJsonSchema, SchemaProperties, Set, Subset} from '../set';
+import {objectHasContradictions} from './object-subset/object-has-contradictions';
+import {unique} from './object-subset/unique';
+import {AllSubset, EmptySubset} from './subset';
 
 export interface SomeObjectSubsetConfig {
     properties: ParsedPropertiesKeyword;
@@ -68,37 +13,8 @@ export interface SomeObjectSubsetConfig {
     required: string[];
 }
 
-export class SomeObjectSubset implements ObjectSubset {
-    private static intersectRequired(thisRequired: string[], otherRequired: string[]): string[] {
-        return _.sortBy(_.uniq(thisRequired.concat(otherRequired)));
-    }
-
-    private static intersectMinProperties(thisMinProperties: number, otherMinProperties: number): number {
-        // TODO: can't be asserted without minProperties support:
-        //  {minProperties: 1, type: 'object'} -> {minProperties: 2, type: 'object'}
-        return Math.max(thisMinProperties, otherMinProperties);
-    }
-
-    private static getUniquePropertyNames(thisPropertyNames: string[], otherPropertyNames: string[]): string[] {
-        return _.uniq(thisPropertyNames.concat(otherPropertyNames));
-    }
-
-    private static intersectProperties(
-        objectSet1: SomeObjectSubset,
-        objectSet2: SomeObjectSubset
-    ): ParsedPropertiesKeyword {
-        const allPropertyNames = SomeObjectSubset.getUniquePropertyNames(
-            objectSet1.getPropertyNames(), objectSet2.getPropertyNames()
-        );
-
-        return allPropertyNames.reduce<ParsedPropertiesKeyword>((accumulator, propertyName) => {
-            accumulator[propertyName] = objectSet1.getPropertySet(propertyName)
-                .intersect(objectSet2.getPropertySet(propertyName));
-
-            return accumulator;
-        }, {});
-    }
-
+class SomeObjectSubset implements Subset<'object'> {
+    public readonly setType = 'object';
     public readonly type = 'some';
 
     public constructor(private readonly config: SomeObjectSubsetConfig) {
@@ -108,25 +24,24 @@ export class SomeObjectSubset implements ObjectSubset {
         return this.config.properties;
     }
 
-    public intersect(other: ObjectSubset): ObjectSubset {
-        return other.intersectWithSome(this);
-    }
-
-    public intersectWithSome(other: SomeObjectSubset): ObjectSubset {
-        return createObjectSubsetFromConfig({
-            additionalProperties: this.config.additionalProperties.intersect(other.config.additionalProperties),
-            minProperties:
-                SomeObjectSubset.intersectMinProperties(this.config.minProperties, other.config.minProperties),
-            properties: SomeObjectSubset.intersectProperties(this, other),
-            required: SomeObjectSubset.intersectRequired(this.config.required, other.config.required)
-        });
-    }
-
-    public complement(): ObjectSubset[] {
+    public complement(): Array<Subset<'object'>> {
         const complementedProperties = this.complementProperties();
         const complementedAdditionalProperties = this.complementAdditionalProperties();
         const complementedRequiredProperties = this.complementRequiredProperties();
         return [...complementedAdditionalProperties, ...complementedProperties, ...complementedRequiredProperties];
+    }
+
+    public intersect(other: Subset<'object'>): Subset<'object'> {
+        return other.intersectWithSome(this);
+    }
+
+    public intersectWithSome(other: SomeObjectSubset): Subset<'object'> {
+        return createObjectSubsetFromConfig({
+            additionalProperties: this.config.additionalProperties.intersect(other.config.additionalProperties),
+            minProperties: this.intersectMinProperties(other),
+            properties: this.intersectProperties(other),
+            required: this.intersectRequired(other)
+        });
     }
 
     public toJsonSchema(): RepresentationJsonSchema {
@@ -141,11 +56,11 @@ export class SomeObjectSubset implements ObjectSubset {
         };
     }
 
-    public getPropertySet(propertyName: string): Set<'json'> {
+    private getPropertySet(propertyName: string): Set<'json'> {
         return this.config.properties[propertyName] || this.config.additionalProperties;
     }
 
-    public getPropertyNames(): string[] {
+    private getPropertyNames(): string[] {
         return Object.keys(this.config.properties);
     }
 
@@ -156,7 +71,7 @@ export class SomeObjectSubset implements ObjectSubset {
         }, {});
     }
 
-    private complementProperties(): ObjectSubset[] {
+    private complementProperties(): Array<Subset<'object'>> {
         return this.getPropertyNames().map((propertyName) => {
             const complementedPropertySchema = this.getPropertySet(propertyName).complement();
 
@@ -172,7 +87,7 @@ export class SomeObjectSubset implements ObjectSubset {
         });
     }
 
-    private complementRequiredProperties(): ObjectSubset[] {
+    private complementRequiredProperties(): Array<Subset<'object'>> {
         return this.config.required.map((requiredPropertyName) =>
             createObjectSubsetFromConfig({
                 additionalProperties: allJsonSet,
@@ -184,7 +99,7 @@ export class SomeObjectSubset implements ObjectSubset {
             }));
     }
 
-    private complementAdditionalProperties(): ObjectSubset[] {
+    private complementAdditionalProperties(): Array<Subset<'object'>> {
         const defaultComplementedAdditionalProperties = [this.complementAdditionalPropertiesWithEmpty()];
 
         return this.getPropertyNames().length > 0
@@ -192,7 +107,7 @@ export class SomeObjectSubset implements ObjectSubset {
             : defaultComplementedAdditionalProperties;
     }
 
-    private complementAdditionalPropertiesWithEmpty(): ObjectSubset {
+    private complementAdditionalPropertiesWithEmpty(): Subset<'object'> {
         const propertyNames = this.getPropertyNames();
 
         const emptyProperties = propertyNames
@@ -209,18 +124,41 @@ export class SomeObjectSubset implements ObjectSubset {
         });
     }
 
-    private complementAdditionalPropertiesWithRequired(): ObjectSubset {
+    private complementAdditionalPropertiesWithRequired(): Subset<'object'> {
         return createObjectSubsetFromConfig({
             additionalProperties: this.config.additionalProperties.complement(),
             minProperties: 1 + Object.keys(this.config.properties).length,
+            // TODO: All the tests went green when I made this an empty object, whats up with that?
             properties: this.config.properties,
             required: Object.keys(this.config.properties)
         });
     }
+
+    private intersectMinProperties(other: SomeObjectSubset): number {
+        // TODO: can't be asserted without minProperties support:
+        //  {minProperties: 1, type: 'object'} -> {minProperties: 2, type: 'object'}
+        return Math.max(this.config.minProperties, other.config.minProperties);
+    }
+
+    private intersectProperties(other: SomeObjectSubset): ParsedPropertiesKeyword {
+        const allPropertyNames = unique(this.getPropertyNames(), other.getPropertyNames());
+
+        return allPropertyNames.reduce<ParsedPropertiesKeyword>((accumulator, propertyName) => {
+            accumulator[propertyName] = this.getPropertySet(propertyName).intersect(other.getPropertySet(propertyName));
+
+            return accumulator;
+        }, {});
+    }
+
+    private intersectRequired(other: SomeObjectSubset): string[] {
+        return unique(this.config.required, other.config.required);
+    }
 }
 
-export const createObjectSubsetFromConfig = (config: SomeObjectSubsetConfig): ObjectSubset => {
-    return hasContradictions(config)
+export const allObjectSubset = new AllSubset('object');
+export const emptyObjectSubset = new EmptySubset('object');
+export const createObjectSubsetFromConfig = (config: SomeObjectSubsetConfig): Subset<'object'> => {
+    return objectHasContradictions(config)
         ? emptyObjectSubset
         : new SomeObjectSubset(config);
 };

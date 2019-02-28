@@ -8,6 +8,7 @@ import {createTypeSet} from './create-type-set';
 export interface ParsedSchemaKeywords {
     additionalProperties: Set<'json'>;
     items: Set<'json'>;
+    maxItems: number;
     minItems: number;
     minProperties: number;
     properties: ParsedPropertiesKeyword;
