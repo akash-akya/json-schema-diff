@@ -2,8 +2,8 @@
 > A language agnostic CLI tool and nodejs api to identify differences between two json schema files.
 
 ## Requirements
-- nodejs 6.x or higher (tested using 6.x, 8.x and 9.x)
-- npm 2.x or higher (tested using 2.x, 3.x and 5x)
+- nodejs 6.x or higher (tested using 6.x, 8.x, 10.x and 11.x)
+- npm 3.x or higher (tested using 3.x and 6.x)
 
 ## Installation
 
