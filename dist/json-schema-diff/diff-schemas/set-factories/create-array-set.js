@@ -1,19 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const array_set_1 = require("../set/array-set");
+const set_of_subsets_1 = require("../set/set-of-subsets");
+const array_subset_1 = require("../set/subset/array-subset");
 const is_type_supported_1 = require("./is-type-supported");
-const supportsAllArrays = (arraySetParsedKeywords) => {
-    // TODO: This should look at the minItems keyword, but we need minItems support to do that
-    return arraySetParsedKeywords.items.type === 'all';
-};
-exports.createArraySet = (arraySetParsedKeywords) => {
+const supportsAllArrays = (arraySetParsedKeywords) => arraySetParsedKeywords.items.type === 'all' && arraySetParsedKeywords.minItems === 0;
+const createArraySubset = (arraySetParsedKeywords) => {
     if (!is_type_supported_1.isTypeSupported(arraySetParsedKeywords.type, 'array')) {
-        return array_set_1.emptyArraySet;
+        return array_subset_1.emptyArraySubset;
     }
     if (supportsAllArrays(arraySetParsedKeywords)) {
-        return array_set_1.allArraySet;
+        return array_subset_1.allArraySubset;
     }
-    // TODO: Make this invoke createArraySetFromConfig, but can't be asserted, needs support:
-    //  {minItems: 1, type: 'array', items: false} -> false
-    return new array_set_1.SomeArraySet(arraySetParsedKeywords);
+    return array_subset_1.createArraySubsetFromConfig(arraySetParsedKeywords);
+};
+exports.createArraySet = (arraySetParsedKeywords) => {
+    const arraySubset = createArraySubset(arraySetParsedKeywords);
+    return new set_of_subsets_1.SetOfSubsets('array', [arraySubset]);
 };

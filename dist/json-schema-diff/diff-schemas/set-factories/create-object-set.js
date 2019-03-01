@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const object_set_1 = require("../set/object-set");
+const set_of_subsets_1 = require("../set/set-of-subsets");
 const object_subset_1 = require("../set/subset/object-subset");
 const is_type_supported_1 = require("./is-type-supported");
 const supportsAllObjects = (objectSetParsedKeywords) => {
@@ -28,5 +28,5 @@ const createObjectSubset = (objectSetParsedKeywords) => {
 };
 exports.createObjectSet = (objectSetParsedKeywords) => {
     const objectSubset = createObjectSubset(objectSetParsedKeywords);
-    return new object_set_1.ObjectSet([objectSubset]);
+    return new set_of_subsets_1.SetOfSubsets('object', [objectSubset]);
 };

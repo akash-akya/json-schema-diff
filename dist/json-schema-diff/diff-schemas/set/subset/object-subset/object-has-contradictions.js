@@ -17,6 +17,6 @@ const isRequiredPropertyContradiction = (config) => {
         return propertySchema.type === 'empty';
     });
 };
-exports.hasContradictions = (config) => {
+exports.objectHasContradictions = (config) => {
     return isRequiredPropertyContradiction(config) || isMinPropertiesAndAdditionalPropertiesContradiction(config);
 };

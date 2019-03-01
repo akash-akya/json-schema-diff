@@ -22,11 +22,13 @@ const parseType = (type) => {
 };
 const parseRequiredKeyword = (schema) => schema.required || [];
 const generateDefaultMinPropertiesKeyword = () => 0;
-const generateDefaultMinItemsKeyword = () => 0;
+const generateDefaultMaxItemsKeyword = () => Infinity;
+const parseMinItemsKeyword = (schema) => schema.minItems || 0;
 const parseCoreSchemaMetaSchema = (schema) => create_json_set_1.createSomeJsonSet({
     additionalProperties: parseSchemaOrUndefinedAsJsonSet(schema.additionalProperties),
     items: parseSchemaOrUndefinedAsJsonSet(schema.items),
-    minItems: generateDefaultMinItemsKeyword(),
+    maxItems: generateDefaultMaxItemsKeyword(),
+    minItems: parseMinItemsKeyword(schema),
     minProperties: generateDefaultMinPropertiesKeyword(),
     properties: parseSchemaProperties(schema.properties),
     required: parseRequiredKeyword(schema),

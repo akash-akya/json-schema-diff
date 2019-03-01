@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const sanitize_core_representation_json_schema_1 = require("./json-set/sanitize-core-representation-json-schema");
+const omit_defaults_1 = require("./json-set/omit-defaults");
 const set_1 = require("./set");
 class AllJsonSet {
     constructor() {
@@ -17,7 +17,7 @@ class AllJsonSet {
         return other;
     }
     toJsonSchema() {
-        return { type: set_1.allSchemaTypes };
+        return true;
     }
 }
 exports.AllJsonSet = AllJsonSet;
@@ -148,7 +148,7 @@ class SomeJsonSet {
             mergedAnyOf.push(mergedSimpleSubsetSchemas);
             result = mergedComplexSubsetSchemas;
         }
-        const sanitisedResult = sanitize_core_representation_json_schema_1.sanitizeCoreRepresentationJsonSchema(result);
+        const sanitisedResult = omit_defaults_1.omitDefaults(result);
         return SomeJsonSet.toDiffJsonSchema(sanitisedResult);
     }
     getSubsetAsCoreRepresentationJsonSchema(typeSetName) {

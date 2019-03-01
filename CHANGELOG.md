@@ -1,3 +1,13 @@
+<a name="0.11.0"></a>
+# [0.11.0](https://bitbucket.org/atlassian/json-schema-diff/compare/0.10.0...0.11.0) (2019-03-01)
+
+
+### Features
+
+* add support for minItems keyword ([af7ef8f](https://bitbucket.org/atlassian/json-schema-diff/commits/af7ef8f))
+
+
+
 <a name="0.10.0"></a>
 # [0.10.0](https://bitbucket.org/atlassian/json-schema-diff/compare/0.9.0...0.10.0) (2019-02-28)
 
