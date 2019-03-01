@@ -34,7 +34,5 @@ export interface Subset<T> {
     toJsonSchema(): RepresentationJsonSchema;
 }
 
-export const allSchemaTypes: SimpleTypes[] = ['array', 'boolean', 'integer', 'null', 'number', 'object', 'string'];
-
 export const isCoreRepresentationJsonSchema =
     (schema: RepresentationJsonSchema): schema is CoreRepresentationJsonSchema => !!schema;

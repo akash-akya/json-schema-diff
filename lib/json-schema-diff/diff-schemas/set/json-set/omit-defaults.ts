@@ -1,4 +1,11 @@
 import * as _ from 'lodash';
+import {
+    defaultMaxItems,
+    defaultMinItems,
+    defaultMinProperties,
+    defaultProperties,
+    defaultRequired
+} from '../keyword-defaults';
 import {CoreRepresentationJsonSchema, RepresentationJsonSchema} from '../set';
 
 const omitDefaultAdditionalProperties = (schema: CoreRepresentationJsonSchema): CoreRepresentationJsonSchema => {
@@ -8,19 +15,17 @@ const omitDefaultAdditionalProperties = (schema: CoreRepresentationJsonSchema): 
 };
 
 const omitEmptyProperties = (schema: CoreRepresentationJsonSchema): CoreRepresentationJsonSchema => {
-    return schema.properties && Object.keys(schema.properties).length > 0
-        ? schema
-        : _.omit(schema, ['properties']);
+    return _.isEqual(schema.properties, defaultProperties) ? _.omit(schema, ['properties']) : schema;
 };
 
 const omitEmptyRequired = (schema: CoreRepresentationJsonSchema): CoreRepresentationJsonSchema => {
-    return schema.required && schema.required.length > 0
-        ? schema
-        : _.omit(schema, ['required']);
+    return _.isEqual(schema.required, defaultRequired)
+        ? _.omit(schema, ['required'])
+        : schema;
 };
 
 const omitDefaultMinProperties = (schema: CoreRepresentationJsonSchema): CoreRepresentationJsonSchema => {
-    return schema.minProperties === 0
+    return schema.minProperties === defaultMinProperties
         ? _.omit(schema, ['minProperties'])
         : schema;
 };
@@ -32,13 +37,13 @@ const omitDefaultItems = (schema: CoreRepresentationJsonSchema): CoreRepresentat
 };
 
 const omitDefaultMinItems = (schema: CoreRepresentationJsonSchema): CoreRepresentationJsonSchema => {
-    return schema.minItems === 0
+    return schema.minItems === defaultMinItems
         ? _.omit(schema, ['minItems'])
         : schema;
 };
 
 const omitDefaultMaxItems = (schema: CoreRepresentationJsonSchema): CoreRepresentationJsonSchema => {
-    return schema.maxItems === Infinity
+    return schema.maxItems === defaultMaxItems
         ? _.omit(schema, ['maxItems'])
         : schema;
 };

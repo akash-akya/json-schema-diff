@@ -1,6 +1,7 @@
 // tslint:disable:max-classes-per-file
 
 import {allJsonSet, emptyJsonSet} from '../json-set';
+import {defaultMinProperties, defaultRequired} from '../keyword-defaults';
 import {ParsedPropertiesKeyword, RepresentationJsonSchema, SchemaProperties, Set, Subset} from '../set';
 import {objectHasContradictions} from './object-subset/object-has-contradictions';
 import {unique} from './object-subset/unique';
@@ -79,7 +80,7 @@ class SomeObjectSubset implements Subset<'object'> {
                     additionalProperties: allJsonSet,
                     // TODO: Untestable today, need:
                     //  not: {properties: {name: {type: 'string'}, minProperties: 1, type: 'object'} -> true
-                    minProperties: 0,
+                    minProperties: defaultMinProperties,
                     properties: {[propertyName]: complementedPropertySchema},
                     required: [propertyName]
                 }
@@ -91,11 +92,11 @@ class SomeObjectSubset implements Subset<'object'> {
         return this.config.required.map((requiredPropertyName) =>
             createObjectSubsetFromConfig({
                 additionalProperties: allJsonSet,
-                minProperties: 0,
+                minProperties: defaultMinProperties,
                 properties: {
                     [requiredPropertyName]: emptyJsonSet
                 },
-                required: []
+                required: defaultRequired
             }));
     }
 
@@ -120,7 +121,7 @@ class SomeObjectSubset implements Subset<'object'> {
             additionalProperties: this.config.additionalProperties.complement(),
             minProperties: 1,
             properties: emptyProperties,
-            required: []
+            required: defaultRequired
         });
     }
 

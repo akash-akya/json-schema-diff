@@ -91,6 +91,34 @@ describe('diff-schemas type object', () => {
         expect(diffResult.removedJsonSchema).toEqual(false);
     });
 
+    it('should not find differences between two different contradictions', async () => {
+        const sourceSchema: JsonSchema = {
+            properties: {
+                name: false
+            },
+            required: ['name'],
+            type: 'object'
+        };
+        const destinationSchema: JsonSchema = {
+            properties: {
+                address: {
+                    properties: {
+                        street: false
+                    },
+                    required: ['street'],
+                    type: 'object'
+                }
+            },
+            required: ['address'],
+            type: 'object'
+        };
+
+        const diffResult = await invokeDiff(sourceSchema, destinationSchema);
+
+        expect(diffResult.addedJsonSchema).toEqual(false);
+        expect(diffResult.removedJsonSchema).toEqual(false);
+    });
+
     it('should find an add and a remove differences when changing properties type', async () => {
         const sourceSchema: JsonSchema = {
             properties: {

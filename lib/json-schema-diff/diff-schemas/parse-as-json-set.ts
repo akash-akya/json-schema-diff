@@ -1,7 +1,13 @@
 import {CoreSchemaMetaSchema, JsonSchema, JsonSchemaMap, SimpleTypes} from 'json-schema-spec-types';
-import {isBoolean, isUndefined} from 'util';
 import {createAllJsonSet, createEmptyJsonSet, createSomeJsonSet} from './set-factories/create-json-set';
-import {allSchemaTypes, ParsedPropertiesKeyword, Set} from './set/set';
+import {
+    defaultMaxItems,
+    defaultMinItems,
+    defaultMinProperties,
+    defaultRequired,
+    defaultTypes
+} from './set/keyword-defaults';
+import {ParsedPropertiesKeyword, Set} from './set/set';
 
 const parseSchemaProperties = (schemaProperties: JsonSchemaMap = {}): ParsedPropertiesKeyword => {
     const objectSetProperties: ParsedPropertiesKeyword = {};
@@ -15,7 +21,7 @@ const parseSchemaProperties = (schemaProperties: JsonSchemaMap = {}): ParsedProp
 
 const parseType = (type: SimpleTypes | SimpleTypes[] | undefined): SimpleTypes[] => {
     if (!type) {
-        return allSchemaTypes;
+        return defaultTypes;
     }
 
     if (typeof type === 'string') {
@@ -25,33 +31,33 @@ const parseType = (type: SimpleTypes | SimpleTypes[] | undefined): SimpleTypes[]
     return type;
 };
 
-const parseRequiredKeyword = (schema: CoreSchemaMetaSchema): string[] => schema.required || [];
+const parseRequiredKeyword = (required: string[] | undefined): string[] => required || defaultRequired;
 
-const generateDefaultMinPropertiesKeyword = (): number => 0;
+const parseMinItemsKeyword = (minItems: number | undefined): number =>
+    typeof minItems === 'number' ? minItems : defaultMinItems;
 
-const generateDefaultMaxItemsKeyword = (): number => Infinity;
-
-const parseMinItemsKeyword = (schema: CoreSchemaMetaSchema): number => schema.minItems || 0;
+const parseMaxItemsKeyword = (maxItems: number | undefined): number =>
+    typeof maxItems === 'number' ? maxItems : defaultMaxItems;
 
 const parseCoreSchemaMetaSchema = (schema: CoreSchemaMetaSchema): Set<'json'> =>
     createSomeJsonSet({
         additionalProperties: parseSchemaOrUndefinedAsJsonSet(schema.additionalProperties),
         items: parseSchemaOrUndefinedAsJsonSet(schema.items),
-        maxItems: generateDefaultMaxItemsKeyword(),
-        minItems: parseMinItemsKeyword(schema),
-        minProperties: generateDefaultMinPropertiesKeyword(),
+        maxItems: parseMaxItemsKeyword(schema.maxItems),
+        minItems: parseMinItemsKeyword(schema.minItems),
+        minProperties: defaultMinProperties,
         properties: parseSchemaProperties(schema.properties),
-        required: parseRequiredKeyword(schema),
+        required: parseRequiredKeyword(schema.required),
         type: parseType(schema.type)
     });
 
 const parseBooleanSchema = (schema: boolean | undefined): Set<'json'> => {
-    const allowsAllJsonValues = isUndefined(schema) ? true : schema;
+    const allowsAllJsonValues = schema === undefined ? true : schema;
     return allowsAllJsonValues ? createAllJsonSet() : createEmptyJsonSet();
 };
 
 const parseSchemaOrUndefinedAsJsonSet = (schema: JsonSchema | undefined): Set<'json'> => {
-    return (isBoolean(schema) || isUndefined(schema))
+    return (typeof schema === 'boolean' || schema === undefined)
         ? parseBooleanSchema(schema)
         : parseCoreSchemaMetaSchema(schema);
 };

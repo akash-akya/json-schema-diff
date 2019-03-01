@@ -10,6 +10,12 @@ const isMaxItemsAndMinItemsContradiction = (config: SomeArraySubsetConfig): bool
     return config.minItems > config.maxItems;
 };
 
+const isMinItemsContradiction = (config: SomeArraySubsetConfig): boolean => {
+    return config.minItems === Infinity;
+};
+
 export const arrayHasContradictions = (config: SomeArraySubsetConfig): boolean => {
-    return isItemsAndMinItemsContradiction(config) || isMaxItemsAndMinItemsContradiction(config);
+    return isItemsAndMinItemsContradiction(config)
+        || isMaxItemsAndMinItemsContradiction(config)
+        || isMinItemsContradiction(config);
 };

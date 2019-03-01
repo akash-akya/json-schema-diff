@@ -1,6 +1,7 @@
 // tslint:disable:max-classes-per-file
 
 import {allJsonSet} from '../json-set';
+import {defaultMaxItems, defaultMinItems} from '../keyword-defaults';
 import {RepresentationJsonSchema, Set, Subset} from '../set';
 import {arrayHasContradictions} from './array-subset/array-has-contradictions';
 import {AllSubset, EmptySubset} from './subset';
@@ -19,10 +20,10 @@ class SomeArraySubset implements Subset<'array'> {
     }
 
     public complement(): Array<Subset<'array'>> {
-        // TODO: This should complement the maxItems keyword, however cannot be tested without maxItems support
         const complementedItems = this.complementItems();
         const complementedMinItems = this.complementMinItems();
-        return [complementedItems, complementedMinItems];
+        const complementedMaxItems = this.complementMaxItems();
+        return [complementedItems, complementedMinItems, complementedMaxItems];
     }
 
     public intersect(other: Subset<'array'>): Subset<'array'> {
@@ -32,7 +33,7 @@ class SomeArraySubset implements Subset<'array'> {
     public intersectWithSome(other: SomeArraySubset): Subset<'array'> {
         return createArraySubsetFromConfig({
             items: this.config.items.intersect(other.config.items),
-            maxItems: this.config.maxItems,
+            maxItems: this.intersectMaxItems(other),
             minItems: this.intersectMinItems(other)
         });
     }
@@ -49,7 +50,7 @@ class SomeArraySubset implements Subset<'array'> {
     private complementItems(): Subset<'array'> {
         return createArraySubsetFromConfig({
             items: this.config.items.complement(),
-            maxItems: Infinity,
+            maxItems: defaultMaxItems,
             minItems: 1
         });
     }
@@ -58,17 +59,34 @@ class SomeArraySubset implements Subset<'array'> {
         return createArraySubsetFromConfig({
             items: allJsonSet,
             maxItems: this.config.minItems - 1,
-            minItems: 0
+            minItems: defaultMinItems
+        });
+    }
+
+    private complementMaxItems(): Subset<'array'> {
+        return createArraySubsetFromConfig({
+            items: allJsonSet,
+            maxItems: defaultMaxItems,
+            minItems: this.config.maxItems + 1
         });
     }
 
     private intersectMinItems(other: SomeArraySubset): number {
         return Math.max(this.config.minItems, other.config.minItems);
     }
+
+    private intersectMaxItems(other: SomeArraySubset): number {
+        return Math.min(this.config.maxItems, other.config.maxItems);
+    }
 }
 
-const simplifyArraySubsetConfig = (config: SomeArraySubsetConfig): SomeArraySubsetConfig =>
-    config.maxItems === 0 ? {...config, items: allJsonSet} : config;
+const simplifyArraySubsetConfig = (config: SomeArraySubsetConfig): SomeArraySubsetConfig => {
+    if (config.maxItems === 0) {
+        return {...config, items: allJsonSet};
+    } else {
+        return config;
+    }
+};
 
 export const allArraySubset = new AllSubset('array');
 export const emptyArraySubset = new EmptySubset('array');

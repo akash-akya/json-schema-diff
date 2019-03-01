@@ -1,4 +1,5 @@
 import {SimpleTypes} from 'json-schema-spec-types';
+import {defaultMaxItems, defaultMinItems} from '../set/keyword-defaults';
 import {Set, Subset} from '../set/set';
 import {SetOfSubsets} from '../set/set-of-subsets';
 import {allArraySubset, createArraySubsetFromConfig, emptyArraySubset} from '../set/subset/array-subset';
@@ -12,7 +13,9 @@ export interface ArraySetParsedKeywords {
 }
 
 const supportsAllArrays = (arraySetParsedKeywords: ArraySetParsedKeywords): boolean =>
-    arraySetParsedKeywords.items.type === 'all' && arraySetParsedKeywords.minItems === 0;
+    arraySetParsedKeywords.items.type === 'all'
+    && arraySetParsedKeywords.minItems === defaultMinItems
+    && arraySetParsedKeywords.maxItems === defaultMaxItems;
 
 const createArraySubset = (arraySetParsedKeywords: ArraySetParsedKeywords): Subset<'array'> => {
     if (!isTypeSupported(arraySetParsedKeywords.type, 'array')) {

@@ -36,7 +36,7 @@ This is a list of all the keywords in json schema and which keywords Json Schema
 |---|---|
 | items | partial, yes for a single schema, no for an array of schemas |
 | additionalItems | no |
-| maxItems | no |
+| maxItems | yes |
 | minItems | yes |
 | uniqueItems | no |
 | contains | no |
