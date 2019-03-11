@@ -1,8 +1,8 @@
 import {
-    SomeObjectSubsetConfig
-} from '../object-subset';
+    ObjectSubsetConfig
+} from './object-subset-config';
 
-const isMinPropertiesBiggerThanDefinedProperties = (config: SomeObjectSubsetConfig): boolean => {
+const isMinPropertiesBiggerThanDefinedProperties = (config: ObjectSubsetConfig): boolean => {
     const numberOfDefinedPropertiesInSchema = Object.keys(config.properties)
         .map((propertyName) => config.properties[propertyName])
         .filter((propertySchema) => propertySchema.type !== 'empty')
@@ -11,20 +11,21 @@ const isMinPropertiesBiggerThanDefinedProperties = (config: SomeObjectSubsetConf
     return config.minProperties > numberOfDefinedPropertiesInSchema;
 };
 
-const areAdditionalPropertiesNotAllowed = (config: SomeObjectSubsetConfig): boolean =>
+const areAdditionalPropertiesNotAllowed = (config: ObjectSubsetConfig): boolean =>
     config.additionalProperties.type === 'empty';
 
-const isMinPropertiesAndAdditionalPropertiesContradiction = (config: SomeObjectSubsetConfig): boolean => {
+const isMinPropertiesAndAdditionalPropertiesContradiction = (config: ObjectSubsetConfig): boolean => {
     return areAdditionalPropertiesNotAllowed(config) && isMinPropertiesBiggerThanDefinedProperties(config);
 };
 
-const isRequiredPropertyContradiction = (config: SomeObjectSubsetConfig): boolean => {
+const isRequiredPropertyContradiction = (config: ObjectSubsetConfig): boolean => {
     return config.required.some((propertyName) => {
         const propertySchema = config.properties[propertyName] || config.additionalProperties;
         return propertySchema.type === 'empty';
     });
 };
 
-export const objectHasContradictions = (config: SomeObjectSubsetConfig): boolean => {
-    return isRequiredPropertyContradiction(config) || isMinPropertiesAndAdditionalPropertiesContradiction(config);
+export const objectSubsetConfigHasContradictions = (config: ObjectSubsetConfig): boolean => {
+    return isRequiredPropertyContradiction(config)
+        || isMinPropertiesAndAdditionalPropertiesContradiction(config);
 };

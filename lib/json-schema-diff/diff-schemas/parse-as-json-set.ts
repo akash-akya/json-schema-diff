@@ -33,18 +33,15 @@ const parseType = (type: SimpleTypes | SimpleTypes[] | undefined): SimpleTypes[]
 
 const parseRequiredKeyword = (required: string[] | undefined): string[] => required || defaultRequired;
 
-const parseMinItemsKeyword = (minItems: number | undefined): number =>
-    typeof minItems === 'number' ? minItems : defaultMinItems;
-
-const parseMaxItemsKeyword = (maxItems: number | undefined): number =>
-    typeof maxItems === 'number' ? maxItems : defaultMaxItems;
+const parseNumericKeyword = (keywordValue: number | undefined, defaultValue: number): number =>
+    typeof keywordValue === 'number' ? keywordValue : defaultValue;
 
 const parseCoreSchemaMetaSchema = (schema: CoreSchemaMetaSchema): Set<'json'> =>
     createSomeJsonSet({
         additionalProperties: parseSchemaOrUndefinedAsJsonSet(schema.additionalProperties),
         items: parseSchemaOrUndefinedAsJsonSet(schema.items),
-        maxItems: parseMaxItemsKeyword(schema.maxItems),
-        minItems: parseMinItemsKeyword(schema.minItems),
+        maxItems: parseNumericKeyword(schema.maxItems, defaultMaxItems),
+        minItems: parseNumericKeyword(schema.minItems, defaultMinItems),
         minProperties: defaultMinProperties,
         properties: parseSchemaProperties(schema.properties),
         required: parseRequiredKeyword(schema.required),

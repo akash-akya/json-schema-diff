@@ -1,20 +1,20 @@
-import {SomeArraySubsetConfig} from '../array-subset';
+import {ArraySubsetConfig} from './array-subset-config';
 
-const isItemsAndMinItemsContradiction = (config: SomeArraySubsetConfig): boolean => {
+const isItemsAndMinItemsContradiction = (config: ArraySubsetConfig): boolean => {
     const itemsAcceptsNoValues = config.items.type === 'empty';
     const minItemsRequiresValues = config.minItems > 0;
     return itemsAcceptsNoValues && minItemsRequiresValues;
 };
 
-const isMaxItemsAndMinItemsContradiction = (config: SomeArraySubsetConfig): boolean => {
+const isMaxItemsAndMinItemsContradiction = (config: ArraySubsetConfig): boolean => {
     return config.minItems > config.maxItems;
 };
 
-const isMinItemsContradiction = (config: SomeArraySubsetConfig): boolean => {
+const isMinItemsContradiction = (config: ArraySubsetConfig): boolean => {
     return config.minItems === Infinity;
 };
 
-export const arrayHasContradictions = (config: SomeArraySubsetConfig): boolean => {
+export const arraySubsetConfigHasContradictions = (config: ArraySubsetConfig): boolean => {
     return isItemsAndMinItemsContradiction(config)
         || isMaxItemsAndMinItemsContradiction(config)
         || isMinItemsContradiction(config);

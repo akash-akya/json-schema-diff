@@ -63,7 +63,7 @@ export const omitDefaults =
             omitDefaultAdditionalProperties(
                 omitEmptyProperties(
                     omitEmptyRequired(
-                        omitDefaultMinProperties(
-                            omitDefaultMinItems(
-                                omitDefaultMaxItems(
-                                    omitDefaultItems(originalSchema))))))));
+                            omitDefaultMinProperties(
+                                omitDefaultMinItems(
+                                    omitDefaultMaxItems(
+                                        omitDefaultItems(originalSchema))))))));

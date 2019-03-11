@@ -6,16 +6,14 @@ import {isTypeSupported} from './is-type-supported';
 
 export interface ObjectSetParsedKeywords {
     additionalProperties: Set<'json'>;
-    type: SimpleTypes[];
+    minProperties: number;
     properties: ParsedPropertiesKeyword;
     required: string[];
-    minProperties: number;
+    type: SimpleTypes[];
 }
 
 const supportsAllObjects = (objectSetParsedKeywords: ObjectSetParsedKeywords): boolean => {
-    // TODO: This should look at the minProperties keyword, but we need minProperties support to do that
-    const everyPropertyIsAll = Object
-        .keys(objectSetParsedKeywords.properties)
+    const everyPropertyIsAll = Object.keys(objectSetParsedKeywords.properties)
         .every((propertyName) => objectSetParsedKeywords.properties[propertyName].type === 'all');
 
     return everyPropertyIsAll
