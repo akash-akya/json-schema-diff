@@ -154,6 +154,67 @@ describe('diff-schemas type object', () => {
         });
     });
 
+    describe('minProperties', () => {
+        it('should find a removed difference when a minProperties constraint is added', async () => {
+            const sourceSchema: JsonSchema = {
+                type: 'object'
+            };
+            const destinationSchema: JsonSchema = {
+                minProperties: 10,
+                type: 'object'
+            };
+
+            const diffResult = await invokeDiff(sourceSchema, destinationSchema);
+
+            const allObjectsWithZeroToNineProperties: JsonSchema = {
+                maxProperties: 9,
+                type: ['object']
+            };
+            expect(diffResult.addedJsonSchema).toEqual(false);
+            expect(diffResult.removedJsonSchema).toEqual(allObjectsWithZeroToNineProperties);
+        });
+
+        it('should find an removed difference when a minProperties constraint made more strict', async () => {
+            const sourceSchema: JsonSchema = {
+                minProperties: 5,
+                type: 'object'
+            };
+            const destinationSchema: JsonSchema = {
+                minProperties: 10,
+                type: 'object'
+            };
+
+            const diffResult = await invokeDiff(sourceSchema, destinationSchema);
+
+            const allObjectsWithFiveToNineProperties: JsonSchema = {
+                maxProperties: 9,
+                minProperties: 5,
+                type: ['object']
+            };
+            expect(diffResult.addedJsonSchema).toEqual(false);
+            expect(diffResult.removedJsonSchema).toEqual(allObjectsWithFiveToNineProperties);
+        });
+
+        it('should find the empty object was removed when a minProperties of 1 constraint is added', async () => {
+            const sourceSchema: JsonSchema = {
+                type: 'object'
+            };
+            const destinationSchema: JsonSchema = {
+                minProperties: 1,
+                type: 'object'
+            };
+
+            const diffResult = await invokeDiff(sourceSchema, destinationSchema);
+
+            const theEmptyObject: JsonSchema = {
+                maxProperties: 0,
+                type: ['object']
+            };
+            expect(diffResult.addedJsonSchema).toEqual(false);
+            expect(diffResult.removedJsonSchema).toEqual(theEmptyObject);
+        });
+    });
+
     describe('additionalProperties + properties', () => {
         it('should infer that all objects are supported when no constraints are applied by properties', async () => {
             const sourceSchema: JsonSchema = {
@@ -383,6 +444,29 @@ describe('diff-schemas type object', () => {
             };
             expect(diffResult.addedJsonSchema).toEqual(allObjectsWithRequiredNameAndRequiredArrayFirst);
             expect(diffResult.removedJsonSchema).toEqual(allObjectsWithRequiredNameAndRequiredStringFirst);
+        });
+    });
+
+    describe('additionalProperties + minProperties', () => {
+        it('should consider contradictions to be the empty object', async () => {
+            const sourceSchema: JsonSchema = {
+                additionalProperties: false,
+                type: 'object'
+            };
+            const destinationSchema: JsonSchema = {
+                additionalProperties: false,
+                minProperties: 1,
+                type: 'object'
+            };
+
+            const diffResult = await invokeDiff(sourceSchema, destinationSchema);
+
+            const anObjectWithNoProperties: JsonSchema = {
+                additionalProperties: false,
+                type: ['object']
+            };
+            expect(diffResult.addedJsonSchema).toEqual(false);
+            expect(diffResult.removedJsonSchema).toEqual(anObjectWithNoProperties);
         });
     });
 

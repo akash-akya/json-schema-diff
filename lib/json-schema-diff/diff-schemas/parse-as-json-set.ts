@@ -2,6 +2,7 @@ import {CoreSchemaMetaSchema, JsonSchema, JsonSchemaMap, SimpleTypes} from 'json
 import {createAllJsonSet, createEmptyJsonSet, createSomeJsonSet} from './set-factories/create-json-set';
 import {
     defaultMaxItems,
+    defaultMaxProperties,
     defaultMinItems,
     defaultMinProperties,
     defaultRequired,
@@ -41,8 +42,9 @@ const parseCoreSchemaMetaSchema = (schema: CoreSchemaMetaSchema): Set<'json'> =>
         additionalProperties: parseSchemaOrUndefinedAsJsonSet(schema.additionalProperties),
         items: parseSchemaOrUndefinedAsJsonSet(schema.items),
         maxItems: parseNumericKeyword(schema.maxItems, defaultMaxItems),
+        maxProperties: defaultMaxProperties,
         minItems: parseNumericKeyword(schema.minItems, defaultMinItems),
-        minProperties: defaultMinProperties,
+        minProperties: parseNumericKeyword(schema.minProperties, defaultMinProperties),
         properties: parseSchemaProperties(schema.properties),
         required: parseRequiredKeyword(schema.required),
         type: parseType(schema.type)

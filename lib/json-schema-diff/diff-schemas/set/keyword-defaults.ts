@@ -1,7 +1,9 @@
-import {JsonSchemaMap, SimpleTypes} from 'json-schema-spec-types';
+import {SimpleTypes} from 'json-schema-spec-types';
+import {ParsedPropertiesKeyword} from './set';
 
-export const defaultProperties: JsonSchemaMap = {};
+export const defaultProperties: ParsedPropertiesKeyword = {};
 export const defaultMaxItems: number = Infinity;
+export const defaultMaxProperties: number = Infinity;
 export const defaultMinItems: number = 0;
 export const defaultMinProperties: number = 0;
 export const defaultRequired: string[] = [];

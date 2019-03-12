@@ -47,7 +47,7 @@ This is a list of all the keywords in json schema and which keywords Json Schema
 | Keyword | Supported |
 |---|---|
 | maxProperties | no |
-| minProperties | no |
+| minProperties | yes |
 | required | yes |
 | properties | yes |
 | patternProperties | no |

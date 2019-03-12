@@ -33,6 +33,7 @@ class SomeObjectSubset implements Subset<'object'> {
         const additionalProperties = this.config.additionalProperties.toJsonSchema();
         return {
             additionalProperties,
+            maxProperties: this.config.maxProperties,
             minProperties: this.config.minProperties,
             properties,
             required: this.config.required,

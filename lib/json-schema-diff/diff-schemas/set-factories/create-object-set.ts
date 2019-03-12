@@ -6,6 +6,7 @@ import {isTypeSupported} from './is-type-supported';
 
 export interface ObjectSetParsedKeywords {
     additionalProperties: Set<'json'>;
+    maxProperties: number;
     minProperties: number;
     properties: ParsedPropertiesKeyword;
     required: string[];
@@ -18,7 +19,8 @@ const supportsAllObjects = (objectSetParsedKeywords: ObjectSetParsedKeywords): b
 
     return everyPropertyIsAll
         && objectSetParsedKeywords.required.length === 0
-        && objectSetParsedKeywords.additionalProperties.type === 'all';
+        && objectSetParsedKeywords.additionalProperties.type === 'all'
+        && objectSetParsedKeywords.minProperties === 0;
 };
 
 const createObjectSubset = (objectSetParsedKeywords: ObjectSetParsedKeywords): Subset<'object'> => {
@@ -32,6 +34,7 @@ const createObjectSubset = (objectSetParsedKeywords: ObjectSetParsedKeywords): S
 
     return createObjectSubsetFromConfig({
         additionalProperties: objectSetParsedKeywords.additionalProperties,
+        maxProperties: objectSetParsedKeywords.maxProperties,
         minProperties: objectSetParsedKeywords.minProperties,
         properties: objectSetParsedKeywords.properties,
         required: objectSetParsedKeywords.required

@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import {
     defaultMaxItems,
+    defaultMaxProperties,
     defaultMinItems,
     defaultMinProperties,
     defaultProperties,
@@ -21,6 +22,12 @@ const omitEmptyProperties = (schema: CoreRepresentationJsonSchema): CoreRepresen
 const omitEmptyRequired = (schema: CoreRepresentationJsonSchema): CoreRepresentationJsonSchema => {
     return _.isEqual(schema.required, defaultRequired)
         ? _.omit(schema, ['required'])
+        : schema;
+};
+
+const omitDefaultMaxProperties = (schema: CoreRepresentationJsonSchema): CoreRepresentationJsonSchema => {
+    return schema.maxProperties === defaultMaxProperties
+        ? _.omit(schema, ['maxProperties'])
         : schema;
 };
 
@@ -63,7 +70,8 @@ export const omitDefaults =
             omitDefaultAdditionalProperties(
                 omitEmptyProperties(
                     omitEmptyRequired(
+                        omitDefaultMaxProperties(
                             omitDefaultMinProperties(
                                 omitDefaultMinItems(
                                     omitDefaultMaxItems(
-                                        omitDefaultItems(originalSchema))))))));
+                                        omitDefaultItems(originalSchema)))))))));

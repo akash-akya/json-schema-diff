@@ -3,6 +3,7 @@ import {ParsedPropertiesKeyword, Set} from '../../set';
 export interface ObjectSubsetConfig {
     additionalProperties: Set<'json'>;
     properties: ParsedPropertiesKeyword;
+    maxProperties: number;
     minProperties: number;
     required: string[];
 }

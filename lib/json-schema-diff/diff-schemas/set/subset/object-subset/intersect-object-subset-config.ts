@@ -2,6 +2,9 @@ import {ParsedPropertiesKeyword} from '../../set';
 import {getPropertyNames, getPropertySet, ObjectSubsetConfig} from './object-subset-config';
 import {unique} from './unique';
 
+const intersectMinProperties = (configA: ObjectSubsetConfig, configB: ObjectSubsetConfig): number =>
+    Math.max(configA.minProperties, configB.minProperties);
+
 const intersectProperties = (configA: ObjectSubsetConfig, configB: ObjectSubsetConfig): ParsedPropertiesKeyword => {
     const allPropertyNames = unique(getPropertyNames(configA), getPropertyNames(configB));
 
@@ -23,7 +26,8 @@ export const intersectObjectSubsetConfig = (
     configB: ObjectSubsetConfig
 ): ObjectSubsetConfig => ({
     additionalProperties: configA.additionalProperties.intersect(configB.additionalProperties),
-    minProperties: configA.minProperties,
+    maxProperties: configA.maxProperties,
+    minProperties: intersectMinProperties(configA, configB),
     properties: intersectProperties(configA, configB),
     required: intersectRequired(configA, configB)
 });

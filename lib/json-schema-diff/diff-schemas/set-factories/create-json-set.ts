@@ -9,6 +9,7 @@ export interface ParsedSchemaKeywords {
     additionalProperties: Set<'json'>;
     items: Set<'json'>;
     maxItems: number;
+    maxProperties: number;
     minItems: number;
     minProperties: number;
     properties: ParsedPropertiesKeyword;

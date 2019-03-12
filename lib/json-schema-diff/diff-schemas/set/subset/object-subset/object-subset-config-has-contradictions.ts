@@ -1,6 +1,4 @@
-import {
-    ObjectSubsetConfig
-} from './object-subset-config';
+import {ObjectSubsetConfig} from './object-subset-config';
 
 const isMinPropertiesBiggerThanDefinedProperties = (config: ObjectSubsetConfig): boolean => {
     const numberOfDefinedPropertiesInSchema = Object.keys(config.properties)
@@ -25,7 +23,12 @@ const isRequiredPropertyContradiction = (config: ObjectSubsetConfig): boolean =>
     });
 };
 
+const isMinPropertiesAndMaxPropertiesContradiction = (config: ObjectSubsetConfig): boolean => {
+    return config.minProperties > config.maxProperties;
+};
+
 export const objectSubsetConfigHasContradictions = (config: ObjectSubsetConfig): boolean => {
     return isRequiredPropertyContradiction(config)
-        || isMinPropertiesAndAdditionalPropertiesContradiction(config);
+        || isMinPropertiesAndAdditionalPropertiesContradiction(config)
+        || isMinPropertiesAndMaxPropertiesContradiction(config);
 };

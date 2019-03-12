@@ -175,27 +175,6 @@ describe('diff-schemas type array', () => {
             expect(diffResult.removedJsonSchema).toEqual(arraysWithUpToOneItem);
         });
 
-        it('should return a remove difference representing the empty array value', async () => {
-            const sourceSchema: JsonSchema = {
-                items: {type: 'string'},
-                type: 'array'
-            };
-            const destinationSchema: JsonSchema = {
-                items: {type: 'string'},
-                minItems: 1,
-                type: 'array'
-            };
-
-            const diffResult = await invokeDiff(sourceSchema, destinationSchema);
-
-            const arraysWithNoItems: JsonSchema = {
-                maxItems: 0,
-                type: ['array']
-            };
-            expect(diffResult.addedJsonSchema).toEqual(false);
-            expect(diffResult.removedJsonSchema).toEqual(arraysWithNoItems);
-        });
-
         it('should find a removed difference with correct minItems-maxItems constraint range', async () => {
             const sourceSchema: JsonSchema = {
                 minItems: 2,
@@ -211,6 +190,25 @@ describe('diff-schemas type array', () => {
             const arraysWithNoItems: JsonSchema = {
                 maxItems: 3,
                 minItems: 2,
+                type: ['array']
+            };
+            expect(diffResult.addedJsonSchema).toEqual(false);
+            expect(diffResult.removedJsonSchema).toEqual(arraysWithNoItems);
+        });
+
+        it('should return a remove difference representing the empty array value', async () => {
+            const sourceSchema: JsonSchema = {
+                type: 'array'
+            };
+            const destinationSchema: JsonSchema = {
+                minItems: 1,
+                type: 'array'
+            };
+
+            const diffResult = await invokeDiff(sourceSchema, destinationSchema);
+
+            const arraysWithNoItems: JsonSchema = {
+                maxItems: 0,
                 type: ['array']
             };
             expect(diffResult.addedJsonSchema).toEqual(false);

@@ -1,5 +1,5 @@
 import {allJsonSet, emptyJsonSet} from '../../json-set';
-import {defaultMinProperties, defaultRequired} from '../../keyword-defaults';
+import {defaultMaxProperties, defaultMinProperties, defaultProperties, defaultRequired} from '../../keyword-defaults';
 import {ParsedPropertiesKeyword} from '../../set';
 import {getPropertyNames, getPropertySet, ObjectSubsetConfig} from './object-subset-config';
 
@@ -9,8 +9,7 @@ const complementProperties = (config: ObjectSubsetConfig): ObjectSubsetConfig[] 
 
         return {
             additionalProperties: allJsonSet,
-            // TODO: Untestable today, need:
-            //  not: {properties: {name: {type: 'string'}, minProperties: 1, type: 'object'} -> true
+            maxProperties: defaultMaxProperties,
             minProperties: defaultMinProperties,
             properties: {[propertyName]: complementedPropertySchema},
             required: [propertyName]
@@ -20,12 +19,21 @@ const complementProperties = (config: ObjectSubsetConfig): ObjectSubsetConfig[] 
 const complementRequiredProperties = (config: ObjectSubsetConfig): ObjectSubsetConfig[] =>
     config.required.map((requiredPropertyName) => ({
         additionalProperties: allJsonSet,
+        maxProperties: defaultMaxProperties,
         minProperties: defaultMinProperties,
         properties: {
             [requiredPropertyName]: emptyJsonSet
         },
         required: defaultRequired
     }));
+
+const complementMinProperties = (config: ObjectSubsetConfig): ObjectSubsetConfig => ({
+    additionalProperties: allJsonSet,
+    maxProperties: config.minProperties - 1,
+    minProperties: defaultMinProperties,
+    properties: {},
+    required: defaultRequired
+});
 
 const complementAdditionalProperties = (config: ObjectSubsetConfig): ObjectSubsetConfig[] => {
     const defaultComplementedAdditionalProperties = [complementAdditionalPropertiesWithEmpty(config)];
@@ -45,6 +53,7 @@ const complementAdditionalPropertiesWithEmpty = (config: ObjectSubsetConfig): Ob
 
     return {
         additionalProperties: config.additionalProperties.complement(),
+        maxProperties: defaultMaxProperties,
         minProperties: 1,
         properties: emptyProperties,
         required: defaultRequired
@@ -55,9 +64,9 @@ const complementAdditionalPropertiesWithRequired = (config: ObjectSubsetConfig):
     const propertyNames = getPropertyNames(config);
     return {
         additionalProperties: config.additionalProperties.complement(),
+        maxProperties: defaultMaxProperties,
         minProperties: 1 + propertyNames.length,
-        // TODO: All the tests went green when I made this an empty object, whats up with that?
-        properties: config.properties,
+        properties: defaultProperties,
         required: propertyNames
     };
 };
@@ -66,10 +75,12 @@ export const complementObjectSubsetConfig = (config: ObjectSubsetConfig): Object
     const complementedProperties = complementProperties(config);
     const complementedAdditionalProperties = complementAdditionalProperties(config);
     const complementedRequiredProperties = complementRequiredProperties(config);
+    const complementedMinProperties = complementMinProperties(config);
 
     return [
         ...complementedAdditionalProperties,
         ...complementedProperties,
-        ...complementedRequiredProperties
+        ...complementedRequiredProperties,
+        complementedMinProperties
     ];
 };
