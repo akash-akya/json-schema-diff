@@ -154,3 +154,11 @@ gulp.task('default', (callback) => {
         callback
     );
 });
+
+gulp.task('build', (callback) => {
+    runSequence(
+        ['clean-copy-and-compile-build-output'],
+        ['clean-dist', 'compile-dist'],
+        callback
+    );
+});

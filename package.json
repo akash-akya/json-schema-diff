@@ -7,6 +7,7 @@
   },
   "main": "dist/api.js",
   "scripts": {
+    "build": "./node_modules/.bin/gulp build",
     "release-major": "./node_modules/.bin/gulp release --type major",
     "release-minor": "./node_modules/.bin/gulp release --type minor",
     "release-patch": "./node_modules/.bin/gulp release --type patch",
