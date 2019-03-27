@@ -5,5 +5,5 @@ export const dereferenceSchema = async (schema: JsonSchema): Promise<JsonSchema>
     const refParser = new RefParser();
     return typeof schema === 'boolean'
         ? schema
-        : await refParser.dereference(schema as object, {dereference: {circular: false}}) as JsonSchema;
+        : await refParser.dereference(schema as object, {dereference: {circular: true}}) as JsonSchema;
 };
