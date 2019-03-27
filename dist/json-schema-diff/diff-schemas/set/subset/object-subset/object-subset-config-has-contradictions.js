@@ -17,6 +17,11 @@ const isRequiredPropertyContradiction = (config) => {
         return propertySchema.type === 'empty';
     });
 };
-exports.objectHasContradictions = (config) => {
-    return isRequiredPropertyContradiction(config) || isMinPropertiesAndAdditionalPropertiesContradiction(config);
+const isMinPropertiesAndMaxPropertiesContradiction = (config) => {
+    return config.minProperties > config.maxProperties;
+};
+exports.objectSubsetConfigHasContradictions = (config) => {
+    return isRequiredPropertyContradiction(config)
+        || isMinPropertiesAndAdditionalPropertiesContradiction(config)
+        || isMinPropertiesAndMaxPropertiesContradiction(config);
 };

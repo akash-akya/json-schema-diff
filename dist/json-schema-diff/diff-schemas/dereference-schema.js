@@ -9,10 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const RefParser = require("json-schema-ref-parser");
-const util_1 = require("util");
 exports.dereferenceSchema = (schema) => __awaiter(this, void 0, void 0, function* () {
     const refParser = new RefParser();
-    return util_1.isBoolean(schema)
+    return typeof schema === 'boolean'
         ? schema
-        : yield refParser.dereference(schema, { dereference: { circular: false } });
+        : yield refParser.dereference(schema, { dereference: { circular: true } });
 });

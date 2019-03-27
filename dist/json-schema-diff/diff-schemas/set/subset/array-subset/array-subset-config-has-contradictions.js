@@ -8,6 +8,11 @@ const isItemsAndMinItemsContradiction = (config) => {
 const isMaxItemsAndMinItemsContradiction = (config) => {
     return config.minItems > config.maxItems;
 };
-exports.arrayHasContradictions = (config) => {
-    return isItemsAndMinItemsContradiction(config) || isMaxItemsAndMinItemsContradiction(config);
+const isMinItemsContradiction = (config) => {
+    return config.minItems === Infinity;
+};
+exports.arraySubsetConfigHasContradictions = (config) => {
+    return isItemsAndMinItemsContradiction(config)
+        || isMaxItemsAndMinItemsContradiction(config)
+        || isMinItemsContradiction(config);
 };

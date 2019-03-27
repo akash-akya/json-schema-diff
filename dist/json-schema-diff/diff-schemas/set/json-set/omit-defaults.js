@@ -1,23 +1,27 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const _ = require("lodash");
+const keyword_defaults_1 = require("../keyword-defaults");
 const omitDefaultAdditionalProperties = (schema) => {
     return schema.additionalProperties === true
         ? _.omit(schema, ['additionalProperties'])
         : schema;
 };
 const omitEmptyProperties = (schema) => {
-    return schema.properties && Object.keys(schema.properties).length > 0
-        ? schema
-        : _.omit(schema, ['properties']);
+    return _.isEqual(schema.properties, keyword_defaults_1.defaultProperties) ? _.omit(schema, ['properties']) : schema;
 };
 const omitEmptyRequired = (schema) => {
-    return schema.required && schema.required.length > 0
-        ? schema
-        : _.omit(schema, ['required']);
+    return _.isEqual(schema.required, keyword_defaults_1.defaultRequired)
+        ? _.omit(schema, ['required'])
+        : schema;
+};
+const omitDefaultMaxProperties = (schema) => {
+    return schema.maxProperties === keyword_defaults_1.defaultMaxProperties
+        ? _.omit(schema, ['maxProperties'])
+        : schema;
 };
 const omitDefaultMinProperties = (schema) => {
-    return schema.minProperties === 0
+    return schema.minProperties === keyword_defaults_1.defaultMinProperties
         ? _.omit(schema, ['minProperties'])
         : schema;
 };
@@ -27,12 +31,12 @@ const omitDefaultItems = (schema) => {
         : schema;
 };
 const omitDefaultMinItems = (schema) => {
-    return schema.minItems === 0
+    return schema.minItems === keyword_defaults_1.defaultMinItems
         ? _.omit(schema, ['minItems'])
         : schema;
 };
 const omitDefaultMaxItems = (schema) => {
-    return schema.maxItems === Infinity
+    return schema.maxItems === keyword_defaults_1.defaultMaxItems
         ? _.omit(schema, ['maxItems'])
         : schema;
 };
@@ -41,4 +45,4 @@ const omitDefaultsFromAnyOfSchema = (schema) => {
     return schema.anyOf
         ? Object.assign({}, schema, { anyOf: omitDefaultsFromSchemaArray(schema.anyOf) }) : schema;
 };
-exports.omitDefaults = (originalSchema) => omitDefaultsFromAnyOfSchema(omitDefaultAdditionalProperties(omitEmptyProperties(omitEmptyRequired(omitDefaultMinProperties(omitDefaultMinItems(omitDefaultMaxItems(omitDefaultItems(originalSchema))))))));
+exports.omitDefaults = (originalSchema) => omitDefaultsFromAnyOfSchema(omitDefaultAdditionalProperties(omitEmptyProperties(omitEmptyRequired(omitDefaultMaxProperties(omitDefaultMinProperties(omitDefaultMinItems(omitDefaultMaxItems(omitDefaultItems(originalSchema)))))))));
